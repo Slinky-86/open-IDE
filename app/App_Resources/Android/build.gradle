@@ -3,11 +3,12 @@ android {
     buildToolsVersion "34.0.0"
 
     defaultConfig {
+        applicationId "__PACKAGE__"
         minSdkVersion 21
         targetSdkVersion 34
-        generatedDensities = []
         versionCode 1
         versionName "1.0.0"
+        generatedDensities = []
     }
 
     aaptOptions {
@@ -17,6 +18,13 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 }
 
