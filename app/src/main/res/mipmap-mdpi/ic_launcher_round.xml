@@ -19,11 +19,9 @@
         android:pathData="M32,14 L30,16 L32,18 L30,20 L32,22 L36,18 Z" />
     
     <!-- Center dot -->
-    <circle
+    <path
         android:fillColor="#d4d4d4"
-        android:cx="24"
-        android:cy="18"
-        android:radius="2" />
+        android:pathData="M24,18m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
     
     <!-- IDE text -->
     <path
@@ -35,4 +33,4 @@
     <path
         android:fillColor="#d4d4d4"
         android:pathData="M28,28 L28,34 L32,34 L32,32 L30,32 L30,31 L32,31 L32,29 L30,29 L30,28 Z" />
-</vector></tml>
+</vector>
