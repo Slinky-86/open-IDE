@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    
+    <!-- Background circle -->
+    <path
+        android:fillColor="#1e1e1e"
+        android:pathData="M24,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0" />
+    
+    <!-- Code brackets -->
+    <path
+        android:fillColor="#007acc"
+        android:pathData="M16,14 L12,18 L16,22 L18,20 L16,18 L18,16 Z" />
+    <path
+        android:fillColor="#007acc"
+        android:pathData="M32,14 L30,16 L32,18 L30,20 L32,22 L36,18 Z" />
+    
+    <!-- Center dot -->
+    <circle
+        android:fillColor="#d4d4d4"
+        android:cx="24"
+        android:cy="18"
+        android:radius="2" />
+    
+    <!-- IDE text -->
+    <path
+        android:fillColor="#d4d4d4"
+        android:pathData="M18,28 L18,34 L20,34 L20,28 Z" />
+    <path
+        android:fillColor="#d4d4d4"
+        android:pathData="M22,28 L22,34 L26,34 L26,32 L24,32 L24,28 Z" />
+    <path
+        android:fillColor="#d4d4d4"
+        android:pathData="M28,28 L28,34 L32,34 L32,32 L30,32 L30,31 L32,31 L32,29 L30,29 L30,28 Z" />
+</vector></tml>
