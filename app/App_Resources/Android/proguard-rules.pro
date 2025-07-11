@@ -5,7 +5,7 @@
 -keep class com.tns.** { *; }
 -keep class org.nativescript.** { *; }
 
-# Keep JavaScript interface
+# Keep JavaScript interface methods
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;
 }
@@ -22,3 +22,23 @@
 # Don't warn about missing classes
 -dontwarn com.tns.**
 -dontwarn org.nativescript.**
+
+# Keep WebView JavaScript interface
+-keep public class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# Keep classes that might be accessed via reflection
+-keep class * extends android.webkit.WebViewClient
+-keep class * extends android.webkit.WebChromeClient
+
+# Additional NativeScript specific rules
+-keep class java.lang.reflect.** { *; }
+-keep class com.tns.Runtime { *; }
+-keep class com.tns.NativeScriptApplication { *; }
+-keep class com.tns.NativeScriptActivity { *; }
+
+# Keep all classes with native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
