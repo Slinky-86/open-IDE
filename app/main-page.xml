@@ -1,0 +1,92 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="page">
+  <ActionBar title="Mobile IDE" class="action-bar">
+    <NavigationButton text="☰" tap="{{ toggleSidebar }}" />
+    <ActionItem text="+" tap="{{ createNewFile }}" ios.position="left" android.position="actionBar" />
+    <ActionItem text="⟲" tap="{{ refreshApp }}" ios.position="right" android.position="actionBar" />
+  </ActionBar>
+
+  <GridLayout columns="{{ sidebarVisible ? '250, *' : '*' }}" rows="*, {{ consoleVisible ? '200' : '0' }}">
+    
+    <!-- File Explorer Sidebar -->
+    <ScrollView col="0" class="sidebar" visibility="{{ sidebarVisible ? 'visible' : 'collapsed' }}">
+      <StackLayout class="p-4">
+        <Label text="Files" class="sidebar-title" />
+        <StackLayout class="file-tree">
+          <Repeater items="{{ fileSystem.fileTree }}">
+            <Repeater.itemTemplate>
+              <StackLayout class="file-node" tap="onFileNodeTap">
+                <GridLayout columns="auto, *" class="p-2 file-item">
+                  <Label col="0" text="{{ type === 'folder' ? '📁' : '📄' }}" class="file-icon" />
+                  <Label col="1" text="{{ name }}" class="file-name" />
+                </GridLayout>
+              </StackLayout>
+            </Repeater.itemTemplate>
+          </Repeater>
+        </StackLayout>
+      </StackLayout>
+    </ScrollView>
+
+    <!-- Main Editor Area -->
+    <GridLayout col="{{ sidebarVisible ? '1' : '0' }}" row="0" rows="auto, *" class="editor-area">
+      
+      <!-- Tab Bar -->
+      <ScrollView row="0" orientation="horizontal" class="tab-bar" visibility="{{ editorManager.tabs.length > 0 ? 'visible' : 'collapsed' }}">
+        <StackLayout orientation="horizontal" class="p-1">
+          <Repeater items="{{ editorManager.tabs }}">
+            <Repeater.itemTemplate>
+              <GridLayout columns="*, auto" class="tab {{ isActive ? 'active' : '' }}" tap="onTabTap">
+                <Label col="0" text="{{ name }}{{ isDirty ? ' •' : '' }}" class="tab-title" />
+                <Label col="1" text="×" class="tab-close" tap="onTabClose" />
+              </GridLayout>
+            </Repeater.itemTemplate>
+          </Repeater>
+        </StackLayout>
+      </ScrollView>
+
+      <!-- Editor Content -->
+      <GridLayout row="1" rows="*, auto" class="editor-container">
+        <ScrollView row="0" class="editor-scroll">
+          <TextView id="editor-textarea" 
+                    text="{{ editorManager.activeTab.content }}" 
+                    hint="Start coding..."
+                    class="editor-textarea"
+                    textChange="onEditorTextChange" />
+        </ScrollView>
+        
+        <!-- Editor Actions -->
+        <GridLayout row="1" columns="*, auto, auto, auto" class="editor-actions">
+          <Label col="0" text="{{ editorManager.activeTab ? editorManager.activeTab.name : 'No file open' }}" 
+                 class="status-text" />
+          <Button col="1" text="Save" class="action-btn save-btn" tap="onSaveFile" />
+          <Button col="2" text="Run" class="action-btn run-btn" tap="onRunFile" />
+          <Button col="3" text="Console" class="action-btn console-btn" tap="{{ toggleConsole }}" />
+        </GridLayout>
+      </GridLayout>
+    </GridLayout>
+
+    <!-- Console Panel -->
+    <GridLayout col="{{ sidebarVisible ? '1' : '0' }}" row="1" rows="auto, *" class="console-panel" 
+                visibility="{{ consoleVisible ? 'visible' : 'collapsed' }}">
+      <GridLayout row="0" columns="*, auto" class="console-header">
+        <Label col="0" text="Console Output" class="console-title" />
+        <Button col="1" text="Clear" class="clear-btn" tap="onClearConsole" />
+      </GridLayout>
+      
+      <ScrollView row="1" class="console-content">
+        <StackLayout class="p-2">
+          <Repeater items="{{ runtimeExecutor.history }}">
+            <Repeater.itemTemplate>
+              <StackLayout class="console-entry">
+                <Label text="{{ timestamp | date:'HH:mm:ss' }}" class="console-timestamp" />
+                <Label text="{{ output }}" class="console-output" textWrap="true" />
+                <Label text="{{ error }}" class="console-error" textWrap="true" 
+                       visibility="{{ error ? 'visible' : 'collapsed' }}" />
+              </StackLayout>
+            </Repeater.itemTemplate>
+          </Repeater>
+        </StackLayout>
+      </ScrollView>
+    </GridLayout>
+
+  </GridLayout>
+</Page>

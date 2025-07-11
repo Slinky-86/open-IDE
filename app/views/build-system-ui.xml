@@ -1,0 +1,222 @@
+<!-- 
+  HIDDEN BUILD SYSTEM UI
+  
+  This UI is commented out by default. Users must discover this file
+  and uncomment the sections they want to enable.
+  
+  To enable the build system UI:
+  1. Find this file in the project
+  2. Uncomment the desired sections below
+  3. Add the UI to your main page layout
+  4. Refresh the app to see the build system
+  
+  Available sections:
+  - Build Queue Monitor
+  - Project Manager
+  - Build Configuration
+  - Build History
+-->
+
+<!-- 
+<GridLayout rows="auto, auto, *" class="build-system-panel">
+  
+  Build Status Header
+  <GridLayout row="0" columns="*, auto, auto" class="build-header">
+    <Label col="0" text="Build System" class="build-title" />
+    <Label col="1" text="{{ compiler.isBuilding ? 'Building...' : 'Ready' }}" 
+           class="build-status {{ compiler.isBuilding ? 'building' : 'ready' }}" />
+    <Button col="2" text="⚙️" class="build-settings-btn" tap="onBuildSettings" />
+  </GridLayout>
+
+  Quick Actions
+  <GridLayout row="1" columns="*, *, *, *" class="build-actions">
+    <Button col="0" text="Debug Build" class="build-btn debug" tap="onDebugBuild" />
+    <Button col="1" text="Release Build" class="build-btn release" tap="onReleaseBuild" />
+    <Button col="2" text="New Project" class="build-btn project" tap="onNewProject" />
+    <Button col="3" text="Clean" class="build-btn clean" tap="onCleanBuild" />
+  </GridLayout>
+
+  Build Details Tabs
+  <TabView row="2" class="build-tabs">
+    
+    Build Queue Tab
+    <TabViewItem title="Queue">
+      <ScrollView class="build-queue">
+        <StackLayout class="p-4">
+          <Label text="Build Queue" class="section-title" />
+          <Repeater items="{{ compiler.buildQueue }}">
+            <Repeater.itemTemplate>
+              <GridLayout columns="*, auto, auto" class="queue-item">
+                <StackLayout col="0">
+                  <Label text="{{ type | uppercase }} - {{ platform }}" class="queue-title" />
+                  <Label text="{{ status }}" class="queue-status" />
+                </StackLayout>
+                <Label col="1" text="{{ timestamp | date:'HH:mm' }}" class="queue-time" />
+                <Button col="2" text="❌" class="cancel-btn" tap="onCancelBuild" />
+              </GridLayout>
+            </Repeater.itemTemplate>
+          </Repeater>
+        </StackLayout>
+      </ScrollView>
+    </TabViewItem>
+
+    Projects Tab
+    <TabViewItem title="Projects">
+      <GridLayout rows="auto, *" class="projects-panel">
+        <GridLayout row="0" columns="*, auto" class="projects-header">
+          <Label col="0" text="Projects" class="section-title" />
+          <Button col="1" text="+" class="add-project-btn" tap="onAddProject" />
+        </GridLayout>
+        
+        <ScrollView row="1" class="projects-list">
+          <StackLayout class="p-4">
+            <Repeater items="{{ projectManager.projects }}">
+              <Repeater.itemTemplate>
+                <GridLayout columns="*, auto, auto" class="project-item" tap="onSelectProject">
+                  <StackLayout col="0">
+                    <Label text="{{ name }}" class="project-name" />
+                    <Label text="{{ description }}" class="project-desc" />
+                    <Label text="Modified: {{ lastModified | date:'short' }}" class="project-date" />
+                  </StackLayout>
+                  <Label col="1" text="{{ buildCount }}" class="build-count" />
+                  <Button col="2" text="🗑️" class="delete-btn" tap="onDeleteProject" />
+                </GridLayout>
+              </Repeater.itemTemplate>
+            </Repeater>
+          </StackLayout>
+        </ScrollView>
+      </GridLayout>
+    </TabViewItem>
+
+    Build History Tab
+    <TabViewItem title="History">
+      <ScrollView class="build-history">
+        <StackLayout class="p-4">
+          <GridLayout columns="*, auto" class="history-header">
+            <Label col="0" text="Build History" class="section-title" />
+            <Button col="1" text="Clear" class="clear-btn" tap="onClearHistory" />
+          </GridLayout>
+          
+          <Repeater items="{{ compiler.buildHistory }}">
+            <Repeater.itemTemplate>
+              <StackLayout class="history-item">
+                <GridLayout columns="*, auto" class="history-header">
+                  <Label col="0" text="{{ type | uppercase }} - {{ platform }}" class="history-title" />
+                  <Label col="1" text="{{ status }}" class="history-status {{ status }}" />
+                </GridLayout>
+                <Label text="Started: {{ startTime | date:'medium' }}" class="history-detail" />
+                <Label text="Duration: {{ duration }}ms" class="history-detail" 
+                       visibility="{{ duration ? 'visible' : 'collapsed' }}" />
+                <Label text="Output: {{ outputPath }}" class="history-detail" 
+                       visibility="{{ outputPath ? 'visible' : 'collapsed' }}" />
+                <Label text="Error: {{ error }}" class="history-error" 
+                       visibility="{{ error ? 'visible' : 'collapsed' }}" />
+              </StackLayout>
+            </Repeater.itemTemplate>
+          </Repeater>
+        </StackLayout>
+      </ScrollView>
+    </TabViewItem>
+
+    Configuration Tab
+    <TabViewItem title="Config">
+      <ScrollView class="build-config">
+        <StackLayout class="p-4">
+          <Label text="Build Configuration" class="section-title" />
+          
+          <Label text="Android Settings" class="config-section" />
+          <GridLayout columns="*, *" class="config-row">
+            <Label col="0" text="Min SDK Version:" class="config-label" />
+            <TextField col="1" text="{{ buildConfig.minSdkVersion }}" class="config-input" />
+          </GridLayout>
+          
+          <GridLayout columns="*, *" class="config-row">
+            <Label col="0" text="Target SDK Version:" class="config-label" />
+            <TextField col="1" text="{{ buildConfig.targetSdkVersion }}" class="config-input" />
+          </GridLayout>
+          
+          <GridLayout columns="*, *" class="config-row">
+            <Label col="0" text="Build Tools Version:" class="config-label" />
+            <TextField col="1" text="{{ buildConfig.buildToolsVersion }}" class="config-input" />
+          </GridLayout>
+          
+          <Label text="Optimization" class="config-section" />
+          <GridLayout columns="*, auto" class="config-row">
+            <Label col="0" text="Enable R8 Code Shrinking:" class="config-label" />
+            <Switch col="1" checked="{{ buildConfig.enableR8 }}" class="config-switch" />
+          </GridLayout>
+          
+          <GridLayout columns="*, auto" class="config-row">
+            <Label col="0" text="Enable ProGuard:" class="config-label" />
+            <Switch col="1" checked="{{ buildConfig.enableProguard }}" class="config-switch" />
+          </GridLayout>
+          
+          <Button text="Save Configuration" class="save-config-btn" tap="onSaveConfig" />
+        </StackLayout>
+      </ScrollView>
+    </TabViewItem>
+    
+  </TabView>
+  
+</GridLayout>
+-->
+
+<!-- 
+  EASTER EGG: Advanced Build System
+  
+  Uncomment this section for advanced build features:
+  - Custom build scripts
+  - Plugin management
+  - Deployment tools
+  - Performance monitoring
+-->
+
+<!--
+<GridLayout rows="auto, *" class="advanced-build-system">
+  <Label row="0" text="🚀 Advanced Build System Unlocked!" class="easter-egg-title" />
+  
+  <TabView row="1" class="advanced-tabs">
+    <TabViewItem title="Scripts">
+      <GridLayout rows="auto, *" class="scripts-panel">
+        <Button row="0" text="Add Custom Build Script" class="add-script-btn" tap="onAddScript" />
+        <ScrollView row="1">
+          <StackLayout class="scripts-list">
+            Custom build scripts will appear here
+          </StackLayout>
+        </ScrollView>
+      </GridLayout>
+    </TabViewItem>
+    
+    <TabViewItem title="Deploy">
+      <StackLayout class="deploy-panel">
+        <Label text="Deployment Options" class="section-title" />
+        <Button text="Deploy to Play Store" class="deploy-btn" tap="onDeployPlayStore" />
+        <Button text="Generate Signed APK" class="deploy-btn" tap="onGenerateSignedAPK" />
+        <Button text="Create App Bundle" class="deploy-btn" tap="onCreateBundle" />
+      </StackLayout>
+    </TabViewItem>
+    
+    <TabViewItem title="Monitor">
+      <ScrollView class="monitor-panel">
+        <StackLayout>
+          <Label text="Build Performance" class="section-title" />
+          <Label text="Average Build Time: {{ averageBuildTime }}ms" class="monitor-stat" />
+          <Label text="Success Rate: {{ buildSuccessRate }}%" class="monitor-stat" />
+          <Label text="Total Builds: {{ totalBuilds }}" class="monitor-stat" />
+        </StackLayout>
+      </ScrollView>
+    </TabViewItem>
+  </TabView>
+</GridLayout>
+-->
+
+<!-- 
+  To enable any of these UI sections:
+  1. Remove the comment tags around the section you want
+  2. Add the corresponding CSS classes to your app.css
+  3. Implement the tap handlers in your JavaScript
+  4. Refresh the app
+  
+  This creates a discoverable, extensible build system that users
+  can unlock and customize as they explore the codebase!
+-->

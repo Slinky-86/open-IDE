@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:gravity="fill">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/editor_background"/>
+        </shape>
+    </item>
+    <item android:gravity="center">
+        <bitmap android:src="@drawable/logo" android:gravity="center" />
+    </item>
+</layer-list>
