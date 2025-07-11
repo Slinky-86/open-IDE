@@ -5,6 +5,7 @@ buildscript {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.2'
@@ -18,10 +19,37 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://maven.google.com" }
+        jcenter() {
+            content {
+                includeModule("org.jetbrains.trove4j", "trove4j")
+            }
+        }
     }
 }
 
+// Global clean task
 task clean(type: Delete) {
     delete rootProject.buildDir
+    delete project.file('platforms')
+    delete project.file('node_modules')
+}
+
+// Custom tasks for NativeScript
+task cleanAll(type: Delete) {
+    description = 'Clean all build artifacts and dependencies'
+    delete rootProject.buildDir
+    delete project.file('platforms')
+    delete project.file('hooks')
+    delete fileTree(dir: '.', include: '**/*.d.ts', exclude: 'node_modules/**')
+}
+
+task rebuild {
+    description = 'Clean and rebuild the project'
+    dependsOn 'clean'
+    doLast {
+        println 'Project cleaned. Run your build command to rebuild.'
+    }
 }
