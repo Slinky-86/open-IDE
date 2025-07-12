@@ -1,28 +1,16 @@
 {
   "name": "open-ide",
   "displayName": "Open-IDE",
-  "displayName": "Open-IDE",
   "description": "An open, extensible mobile IDE with runtime customization",
-  "main": "app/app.ts",
+  "main": "app/app.js",
   "version": "1.0.0",
   "private": true,
-  "repository": {
   "nativescript": {
     "id": "com.openide.app",
     "tns-android": {
       "version": "8.7.0"
     }
   },
-    "type": "git",
-    "url": "https://github.com/your-username/mobile-theia-ide.git"
-  },
-  "keywords": [
-    "nativescript",
-    "mobile",
-    "ide",
-    "editor",
-    "theia"
-  ],
   "scripts": {
     "android": "ns build android",
     "android.debug": "ns build android",
@@ -38,12 +26,8 @@
     "@nativescript/core": "~8.8.0"
   },
   "devDependencies": {
-    "@nativescript/preview-cli": "^1.0.14",
-    "@nativescript/stackblitz": "^0.0.8",
-    "@nativescript/tailwind": "^2.1.0",
     "@nativescript/types": "~8.5.0",
     "@nativescript/webpack": "~5.0.0",
-    "tailwindcss": "~3.4.0",
     "typescript": "~5.4.0"
   }
 }
