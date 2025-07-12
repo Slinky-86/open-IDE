@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="__PACKAGE__"
-    android:versionCode="__VERSION_CODE__"
-    android:versionName="__VERSION_NAME__">
+    package="org.nativescript.openide">
 
     <supports-screens
         android:smallScreens="true"
@@ -10,6 +8,7 @@
         android:largeScreens="true"
         android:xlargeScreens="true"/>
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -19,23 +18,27 @@
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true">
 
         <activity
             android:name="com.tns.NativeScriptActivity"
-            android:label="@string/title_activity_kimera"
+            android:label="@string/app_name"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|locale|uiMode"
             android:theme="@style/LaunchScreenTheme"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified">
 
             <meta-data android:name="SET_THEME_ON_LAUNCH" android:resource="@style/AppTheme" />
 
-            <intent-filter android:autoVerify="true">
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity android:name="com.tns.ErrorReportActivity"/>
     </application>
 </manifest>

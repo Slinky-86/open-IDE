@@ -5,10 +5,12 @@ export default {
   appDisplayName: 'Open-IDE',
   appPath: 'app',
   appResourcesPath: 'app/App_Resources',
+  main: 'app/app.js',
   android: {
     v8Flags: '--expose_gc',
     markingMode: 'none',
-    codeCache: true,
-    maxLogcatObjectSize: 2048
+    codeCache: false,
+    maxLogcatObjectSize: 2048,
+    suppressCallJSMethodExceptions: false
   }
 } as NativeScriptConfig;
