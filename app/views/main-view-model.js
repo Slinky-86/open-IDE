@@ -1,7 +1,7 @@
 const { Observable } = require('@nativescript/core');
-const { FileSystemManager } = require('../models/file-system');
-const { EditorManager } = require('../models/editor-manager');
-const { RuntimeExecutor } = require('../models/runtime-executor');
+const { FileSystemManager } = require('../models/file-system.js');
+const { EditorManager } = require('../models/editor-manager.js');
+const { RuntimeExecutor } = require('../models/runtime-executor.js');
 
 class MainViewModel extends Observable {
   constructor() {
@@ -115,7 +115,7 @@ class MainViewModel extends Observable {
       
       // Check if build system should be activated (hidden feature)
       if (global.app && global.app.enableBuildSystem) {
-        const { BuildSystemController } = require('./build-system-ui');
+        const { BuildSystemController } = require('./build-system-ui.js');
         if (!global.app.buildSystem) {
           const buildSystem = new BuildSystemController();
           await buildSystem.initialize();

@@ -6,6 +6,9 @@ class RuntimeExecutor extends Observable {
     this._history = [];
     this._fileSystem = fileSystem;
     this._globalContext = {};
+    
+    // Initialize with empty state
+    this.notifyPropertyChange('history', this._history);
   }
 
   get history() {

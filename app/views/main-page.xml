@@ -13,7 +13,7 @@
         <Label text="📁 Files" class="sidebar-title" />
         <ScrollView class="file-tree">
           <StackLayout>
-            <Repeater items="{{ fileSystem.fileTree }}">
+            <Repeater items="{{ fileSystem.fileTree }}" visibility="{{ fileSystem.fileTree.length > 0 ? 'visible' : 'collapsed' }}">
               <Repeater.itemTemplate>
                 <StackLayout class="file-item" tap="onFileSelect">
                   <Label text="{{ type === 'folder' ? '📁' : '📄' }} {{ name }}" class="file-name" />

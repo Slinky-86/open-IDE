@@ -7,6 +7,10 @@ class EditorManager extends Observable {
     this._activeTabId = null;
     this._fileSystem = fileSystem;
     this._customCommands = new Map();
+    
+    // Initialize with empty state
+    this.notifyPropertyChange('tabs', this._tabs);
+    this.notifyPropertyChange('activeTab', null);
   }
 
   get tabs() {

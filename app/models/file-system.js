@@ -5,6 +5,10 @@ class FileSystemManager extends Observable {
     super();
     this._rootPath = knownFolders.documents().path + '/mobile-ide';
     this._fileTree = [];
+    
+    // Initialize with empty state
+    this.notifyPropertyChange('fileTree', this._fileTree);
+    
     this.initializeWorkspace();
   }
 

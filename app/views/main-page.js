@@ -1,4 +1,4 @@
-const { MainViewModel } = require('./main-view-model');
+const { MainViewModel } = require('./main-view-model.js');
 
 let viewModel;
 
