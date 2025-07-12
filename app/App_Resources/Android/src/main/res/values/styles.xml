@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
     <!-- Application theme -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/ns_primary</item>
-        <item name="colorPrimaryDark">@color/ns_primaryDark</item>
-        <item name="colorAccent">@color/ns_accent</item>
+    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/ns_primary</item>
+        <item name="android:colorPrimaryDark">@color/ns_primaryDark</item>
+        <item name="android:colorAccent">@color/ns_accent</item>
     </style>
 
     <!-- Launch screen theme -->
