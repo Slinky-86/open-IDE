@@ -11,6 +11,9 @@ export default {
     markingMode: 'none',
     codeCache: false,
     maxLogcatObjectSize: 2048,
-    suppressCallJSMethodExceptions: false
+    suppressCallJSMethodExceptions: false,
+    minSdkVersion: 26,
+    targetSdkVersion: 36,
+    compileSdkVersion: 36
   }
 } as NativeScriptConfig;
