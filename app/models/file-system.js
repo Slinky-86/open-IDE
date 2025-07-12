@@ -3,11 +3,13 @@ const { Observable, knownFolders, File, Folder } = require('@nativescript/core')
 class FileSystemManager extends Observable {
   constructor() {
     super();
-    this._rootPath = knownFolders.documents().path + '/mobile-ide';
+    this._rootPath = knownFolders.documents().path + '/open-ide';
     this._fileTree = [];
+    this._isLoading = true;
     
-    // Initialize with empty state
-    this.notifyPropertyChange('fileTree', this._fileTree);
+    // Initialize properties
+    this.set('fileTree', this._fileTree);
+    this.set('isLoading', this._isLoading);
     
     this.initializeWorkspace();
   }
@@ -16,31 +18,40 @@ class FileSystemManager extends Observable {
     return this._fileTree;
   }
 
+  get isLoading() {
+    return this._isLoading;
+  }
+
   get rootPath() {
     return this._rootPath;
   }
 
   async initializeWorkspace() {
     try {
+      console.log('Initializing workspace...');
+      this.set('isLoading', true);
+      
       if (!Folder.exists(this._rootPath)) {
-        // Create the directory by ensuring it exists
         await this.ensureDirectoryExists(this._rootPath);
         await this.createInitialFiles();
       }
       await this.loadFileTree();
+      
+      this.set('isLoading', false);
+      console.log('Workspace initialized');
     } catch (error) {
       console.error('Failed to initialize workspace:', error);
+      this.set('isLoading', false);
     }
   }
 
   async ensureDirectoryExists(path) {
     try {
-      // Create a dummy file to ensure the directory exists, then remove it
       const dummyFile = File.fromPath(path + '/.dummy');
       await dummyFile.writeText('');
       await dummyFile.remove();
     } catch (error) {
-      // Directory creation failed, but that's okay - it might already exist
+      // Directory creation failed, but that's okay
     }
   }
 
@@ -48,185 +59,193 @@ class FileSystemManager extends Observable {
     const initialFiles = [
       { 
         path: 'welcome.js', 
-        content: `// Welcome to Mobile IDE!
-// This is your starting point for customization.
+        content: `// Welcome to Open-IDE!
+// A complete mobile IDE with runtime extensibility
 
-console.log("Welcome to Mobile IDE!");
+console.log("🚀 Welcome to Open-IDE!");
+console.log("📱 Mobile development environment");
+console.log("⚡ Runtime code execution");
+console.log("🔧 Extensible architecture");
 
-// Example: Add your own functionality here
-function customFunction() {
-  return "Hello from custom code!";
+// Example: Access the global IDE API
+if (global.IDE) {
+  console.log("✅ IDE API is available!");
+  console.log("Available modules:", Object.keys(global.IDE));
+} else {
+  console.log("⏳ IDE API loading...");
 }
 
-// Try running this file to see the output
-customFunction();`
+// Example function
+function greetUser() {
+  const message = "Hello from Open-IDE! 🎉";
+  console.log(message);
+  return message;
+}
+
+// Execute the function
+greetUser();
+
+// Try modifying this code and hitting the execute button!`
       },
       { 
         path: 'app-extensions.js', 
         content: `// App Extensions - Runtime Modifications
-// This file is loaded at startup and allows you to modify the IDE
+// This file allows you to extend and customize the IDE at runtime
 
-// Access to the global app context
-// global.app contains references to all managers and UI components
+console.log("🔧 Loading app extensions...");
 
-// Example: Add custom menu items, modify UI, extend functionality
-// Your code here will be executed when the app starts
-
-console.log("App extensions loaded!");
-
-// Example: Add a custom editor command
-if (global.app && global.app.editor) {
-  global.app.editor.addCommand('uppercase', (content) => {
+// Wait for IDE to be ready
+if (global.app && global.IDE) {
+  console.log("✅ IDE context available");
+  
+  // Example: Add a custom editor command
+  global.IDE.editor.addCommand('uppercase', (content) => {
     return content.toUpperCase();
   });
-  console.log("Added uppercase command to editor");
-}
-
-// Example: Add custom UI modifications
-if (global.app && global.app.ui) {
-  // You can modify UI elements here
-  console.log("UI context available for modifications");
+  
+  // Example: Add a custom menu item
+  global.IDE.ui.addMenuItem("Custom Action", () => {
+    global.IDE.ui.showMessage("Custom action executed!");
+  });
+  
+  // Example: Register a plugin
+  global.IDE.plugins.register('myPlugin', {
+    name: 'My Custom Plugin',
+    version: '1.0.0',
+    init: (ide) => {
+      console.log("🔌 Custom plugin initialized!");
+    },
+    customFunction: () => {
+      console.log("🎯 Custom plugin function called!");
+    }
+  });
+  
+  console.log("🎉 Extensions loaded successfully!");
+} else {
+  console.log("⏳ Waiting for IDE to initialize...");
+  
+  // Retry after a delay
+  setTimeout(() => {
+    if (global.IDE) {
+      console.log("🔄 Retrying extension loading...");
+      // Re-run extension code here
+    }
+  }, 1000);
 }`
       },
       {
         path: 'tutorial.md',
-        content: `# Mobile IDE Runtime Modification Tutorial
+        content: `# Open-IDE Tutorial
 
-## Getting Started
+## Welcome to Open-IDE! 🚀
 
-This IDE allows you to modify its own code at runtime using JavaScript! Here's how:
+A complete mobile IDE that runs on your phone with runtime extensibility.
 
-### 1. Understanding the Structure
-- \`app-extensions.js\` - Your main customization file, loaded at startup
-- \`welcome.js\` - Example file to get you started
-- Any \`.js\` files you create can be executed and modify the IDE
+### Features
+- 📁 File management system
+- ✏️ Multi-tab code editor
+- ▶️ Runtime code execution
+- 🔧 Hot reload and live modifications
+- 🔌 Plugin system
+- 🌐 Global API access
 
-### 2. Accessing IDE Components
-The global \`app\` object provides access to:
-- \`app.fileSystem\` - File management
-- \`app.editor\` - Editor functionality  
-- \`app.executor\` - Code execution
-- \`app.ui\` - UI components and page references
+### Getting Started
 
-### 3. Runtime Modifications
-You can:
-- Add new UI components
-- Modify existing functionality
-- Create custom commands
-- Add new file types support
-- Implement syntax highlighting
-- Add debugging tools
+1. **Explore Files**: Tap files in the sidebar to open them
+2. **Edit Code**: Modify code in the editor
+3. **Execute**: Use the ▶️ button to run your code
+4. **See Output**: Check the console for results
+5. **Extend**: Modify \`app-extensions.js\` to customize the IDE
 
-### 4. Example Customizations
+### Global API
 
-#### Add a custom button:
+Access the IDE programmatically:
+
 \`\`\`javascript
-// In app-extensions.js
-const { ActionItem } = require('@nativescript/core');
-const page = global.app.ui.page;
+// File operations
+global.IDE.fs.readFile('welcome.js')
+global.IDE.fs.writeFile('test.js', 'console.log("Hello!");')
 
-const customAction = new ActionItem();
-customAction.text = "Custom";
-customAction.on("tap", () => {
-  alert("Custom action triggered!");
-});
-page.actionBar.actionItems.addItem(customAction);
+// Editor operations
+global.IDE.editor.openFile('welcome.js')
+global.IDE.editor.setContent('new content')
+
+// UI operations
+global.IDE.ui.showMessage('Hello!')
+global.IDE.ui.addMenuItem('Custom', () => {})
+
+// Runtime operations
+global.IDE.runtime.execute('console.log("test")')
 \`\`\`
 
-#### Extend the editor:
-\`\`\`javascript
-// Add custom editor commands
-global.app.editor.addCommand("format", (content) => {
-  // Your formatting logic
-  return formattedContent;
-});
-\`\`\`
+### Creating Extensions
 
-#### Modify UI styling:
-\`\`\`javascript
-// Change editor appearance
-const editor = global.app.ui.page.getViewById('editor-textarea');
-if (editor) {
-  editor.style.fontSize = 16;
-  editor.style.backgroundColor = '#2d2d2d';
-}
-\`\`\`
-
-### 5. Hot Reload
-After making changes:
-1. Save your files
-2. Use the refresh button (⟲) or restart the app
-3. Your changes will be applied immediately
-
-### 6. Creating Plugins
 Create new \`.js\` files with your extensions:
 
 \`\`\`javascript
-// my-plugin.js
-(function() {
-  console.log("My plugin loaded!");
-  
-  // Add your plugin functionality here
-  if (global.app) {
-    global.app.myPlugin = {
-      doSomething: function() {
-        console.log("Plugin function executed!");
-      }
-    };
+// my-extension.js
+global.IDE.plugins.register('myExtension', {
+  init: (ide) => {
+    console.log('Extension loaded!');
   }
-})();
+});
 \`\`\`
 
-Then execute the file to load your plugin!
+### Hot Reload
 
-### 7. Sharing Extensions
-Save your customizations in separate \`.js\` files and share them with others!
+Use the refresh button (⟲) to reload all extensions and see changes immediately!
 
-Happy coding! 🚀`
+Happy coding! 🎉`
       },
       {
-        path: 'syntax-highlighter.js',
-        content: `// Example Plugin: Basic Syntax Highlighter
-// This demonstrates how to extend the IDE with new functionality
+        path: 'examples.js',
+        content: `// Open-IDE Examples
+// Demonstrating the capabilities of the mobile IDE
 
-(function() {
-  console.log("Loading syntax highlighter plugin...");
+console.log("📚 Running Open-IDE examples...");
+
+// Example 1: Basic JavaScript
+function fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+console.log("🔢 Fibonacci(10):", fibonacci(10));
+
+// Example 2: Working with the IDE API
+if (global.IDE) {
+  console.log("🔧 IDE API Examples:");
   
-  if (!global.app) {
-    console.log("App context not available yet");
-    return;
+  // Get current file info
+  const currentFile = global.IDE.editor.getCurrentFile();
+  if (currentFile) {
+    console.log("📄 Current file:", currentFile.name);
   }
   
-  // Add syntax highlighting functionality
-  global.app.syntaxHighlighter = {
-    highlightJavaScript: function(code) {
-      // Basic JavaScript syntax highlighting
-      return code
-        .replace(/(function|var|let|const|if|else|for|while|return)/g, '<span style="color: #569cd6;">$1</span>')
-        .replace(/(console\.log|alert)/g, '<span style="color: #4ec9b0;">$1</span>')
-        .replace(/(".*?"|'.*?')/g, '<span style="color: #ce9178;">$1</span>')
-        .replace(/(\/\/.*$)/gm, '<span style="color: #6a9955;">$1</span>');
-    },
-    
-    applyHighlighting: function() {
-      const editor = global.app.ui.page.getViewById('editor-textarea');
-      if (editor && global.app.editor.activeTab) {
-        const content = global.app.editor.activeTab.content;
-        const highlighted = this.highlightJavaScript(content);
-        console.log("Applied syntax highlighting");
-      }
-    }
-  };
+  // List available commands
+  const commands = global.IDE.editor.getCommands ? global.IDE.editor.getCommands() : [];
+  console.log("⚡ Available commands:", commands);
+}
+
+// Example 3: Async operations
+async function asyncExample() {
+  console.log("⏳ Starting async operation...");
   
-  // Add command to editor
-  if (global.app.editor) {
-    global.app.editor.addCommand('highlight', (content) => {
-      return global.app.syntaxHighlighter.highlightJavaScript(content);
-    });
-  }
+  await new Promise(resolve => setTimeout(resolve, 1000));
   
-  console.log("Syntax highlighter plugin loaded successfully!");
-})();`
+  console.log("✅ Async operation completed!");
+}
+
+asyncExample();
+
+// Example 4: Error handling
+try {
+  throw new Error("This is a test error");
+} catch (error) {
+  console.log("🚨 Caught error:", error.message);
+}
+
+console.log("🎉 Examples completed!");`
       }
     ];
 
@@ -237,35 +256,39 @@ Happy coding! 🚀`
 
   async loadFileTree() {
     this._fileTree = await this.buildFileTree(this._rootPath);
-    this.notifyPropertyChange('fileTree', this._fileTree);
+    this.set('fileTree', this._fileTree);
   }
 
   async buildFileTree(folderPath) {
     const nodes = [];
-    const folder = Folder.fromPath(folderPath);
-
+    
     if (!Folder.exists(folderPath)) return nodes;
 
-    const entities = await folder.getEntities();
-    
-    for (const entity of entities) {
-      const relativePath = entity.path.replace(this._rootPath + '/', '');
+    try {
+      const folder = Folder.fromPath(folderPath);
+      const entities = await folder.getEntities();
       
-      if (entity instanceof Folder) {
-        nodes.push({
-          name: entity.name,
-          path: relativePath,
-          type: 'folder',
-          children: await this.buildFileTree(entity.path),
-          isExpanded: false
-        });
-      } else if (entity instanceof File) {
-        nodes.push({
-          name: entity.name,
-          path: relativePath,
-          type: 'file'
-        });
+      for (const entity of entities) {
+        const relativePath = entity.path.replace(this._rootPath + '/', '');
+        
+        if (entity instanceof Folder) {
+          nodes.push({
+            name: entity.name,
+            path: relativePath,
+            type: 'folder',
+            children: await this.buildFileTree(entity.path),
+            isExpanded: false
+          });
+        } else if (entity instanceof File) {
+          nodes.push({
+            name: entity.name,
+            path: relativePath,
+            type: 'file'
+          });
+        }
       }
+    } catch (error) {
+      console.error('Error building file tree:', error);
     }
 
     return nodes.sort((a, b) => {

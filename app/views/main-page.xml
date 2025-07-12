@@ -13,7 +13,11 @@
         <Label text="📁 Files" class="sidebar-title" />
         <ScrollView class="file-tree">
           <StackLayout>
-            <Repeater items="{{ fileSystem.fileTree }}" visibility="{{ fileSystem.fileTree.length > 0 ? 'visible' : 'collapsed' }}">
+            <Label text="{{ fileSystem.isLoading ? 'Loading files...' : 'No files found' }}" 
+                   class="loading-text" 
+                   visibility="{{ fileSystem.fileTree.length === 0 ? 'visible' : 'collapsed' }}" />
+            <Repeater items="{{ fileSystem.fileTree }}" 
+                      visibility="{{ fileSystem.fileTree.length > 0 ? 'visible' : 'collapsed' }}">
               <Repeater.itemTemplate>
                 <StackLayout class="file-item" tap="onFileSelect">
                   <Label text="{{ type === 'folder' ? '📁' : '📄' }} {{ name }}" class="file-name" />
@@ -42,7 +46,7 @@
         
         <!-- Editor Content -->
         <TextView row="1" id="editor-textarea" 
-                  text="{{ editorManager.activeTab ? editorManager.activeTab.content : 'Welcome to Open-IDE!\n\nSelect a file from the sidebar to start editing.' }}" 
+                  text="{{ editorManager.activeTab ? editorManager.activeTab.content : 'Welcome to Open-IDE!\n\nSelect a file from the sidebar to start editing.\n\nThis is a complete mobile IDE with:\n- File management\n- Code editor\n- Runtime execution\n- Hot reload\n- Extensible API' }}" 
                   textChange="onEditorTextChange"
                   class="editor" />
       </GridLayout>
@@ -58,12 +62,15 @@
       
       <ScrollView row="1" class="console-output">
         <StackLayout class="console-content">
-          <Label text="Console ready. Execute code to see output here." class="console-text" />
+          <Label text="Console ready. Execute code to see output here." 
+                 class="console-text" 
+                 visibility="{{ runtimeExecutor.history.length === 0 ? 'visible' : 'collapsed' }}" />
           <Repeater items="{{ runtimeExecutor.history }}">
             <Repeater.itemTemplate>
               <StackLayout class="console-entry">
                 <Label text="{{ output }}" class="console-text" textWrap="true" />
-                <Label text="{{ error }}" class="console-error" textWrap="true" visibility="{{ error ? 'visible' : 'collapsed' }}" />
+                <Label text="{{ error }}" class="console-error" textWrap="true" 
+                       visibility="{{ error ? 'visible' : 'collapsed' }}" />
               </StackLayout>
             </Repeater.itemTemplate>
           </Repeater>

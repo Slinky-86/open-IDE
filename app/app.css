@@ -1,13 +1,198 @@
+/* Open-IDE Styles - VS Code Dark Theme Inspired */
+
 .page {
   background-color: #1e1e1e;
   color: #d4d4d4;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 }
 
 .action-bar {
   background-color: #2d2d2d;
   color: #d4d4d4;
+  border-bottom-width: 1;
+  border-bottom-color: #3e3e3e;
 }
 
+/* Main Layout */
+.main-container {
+  background-color: #1e1e1e;
+}
+
+.content-area {
+  background-color: #1e1e1e;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #252526;
+  border-right-width: 1;
+  border-right-color: #3e3e3e;
+  padding: 8;
+}
+
+.sidebar-title {
+  font-size: 14;
+  font-weight: bold;
+  color: #cccccc;
+  margin-bottom: 8;
+  padding: 4;
+}
+
+.file-tree {
+  background-color: #252526;
+}
+
+.file-item {
+  padding: 6 8;
+  margin: 1 0;
+  border-radius: 3;
+}
+
+.file-item:active {
+  background-color: #094771;
+}
+
+.file-name {
+  font-size: 13;
+  color: #cccccc;
+}
+
+.loading-text {
+  font-size: 12;
+  color: #858585;
+  text-align: center;
+  padding: 20;
+  font-style: italic;
+}
+
+/* Editor Area */
+.editor-area {
+  background-color: #1e1e1e;
+}
+
+.tabs-container {
+  background-color: #2d2d2d;
+  border-bottom-width: 1;
+  border-bottom-color: #3e3e3e;
+  height: 35;
+}
+
+.tabs {
+  background-color: #2d2d2d;
+}
+
+.tab {
+  background-color: #2d2d2d;
+  border-right-width: 1;
+  border-right-color: #3e3e3e;
+  padding: 8 12;
+  min-width: 120;
+}
+
+.tab.active {
+  background-color: #1e1e1e;
+  border-bottom-width: 2;
+  border-bottom-color: #007acc;
+}
+
+.tab-name {
+  font-size: 13;
+  color: #cccccc;
+}
+
+.tab-close {
+  font-size: 16;
+  color: #858585;
+  margin-left: 8;
+  width: 16;
+  text-align: center;
+}
+
+.tab-close:active {
+  color: #ffffff;
+  background-color: #e81123;
+  border-radius: 3;
+}
+
+.editor {
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14;
+  padding: 16;
+  border-width: 0;
+}
+
+/* Console Panel */
+.console-panel {
+  background-color: #181818;
+  border-top-width: 1;
+  border-top-color: #3e3e3e;
+}
+
+.console-header {
+  background-color: #2d2d2d;
+  padding: 8 12;
+  border-bottom-width: 1;
+  border-bottom-color: #3e3e3e;
+}
+
+.console-title {
+  font-size: 14;
+  font-weight: bold;
+  color: #cccccc;
+}
+
+.execute-btn, .clear-btn {
+  background-color: #007acc;
+  color: #ffffff;
+  border-radius: 3;
+  border-width: 0;
+  padding: 6 12;
+  margin-left: 8;
+  font-size: 12;
+}
+
+.execute-btn:active, .clear-btn:active {
+  background-color: #005a9e;
+}
+
+.clear-btn {
+  background-color: #e81123;
+}
+
+.clear-btn:active {
+  background-color: #c50e1f;
+}
+
+.console-output {
+  background-color: #181818;
+}
+
+.console-content {
+  padding: 8;
+}
+
+.console-entry {
+  margin-bottom: 4;
+  padding: 2 0;
+}
+
+.console-text {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 12;
+  color: #d4d4d4;
+  line-height: 1.4;
+}
+
+.console-error {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 12;
+  color: #f85149;
+  line-height: 1.4;
+}
+
+/* Utility Classes */
 .h1 {
   font-size: 24;
   font-weight: bold;
@@ -16,4 +201,20 @@
 
 .text-center {
   text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600) {
+  .sidebar {
+    width: 150;
+  }
+  
+  .file-name, .tab-name {
+    font-size: 12;
+  }
+  
+  .editor {
+    font-size: 13;
+    padding: 12;
+  }
 }

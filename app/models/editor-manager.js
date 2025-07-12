@@ -8,9 +8,9 @@ class EditorManager extends Observable {
     this._fileSystem = fileSystem;
     this._customCommands = new Map();
     
-    // Initialize with empty state
-    this.notifyPropertyChange('tabs', this._tabs);
-    this.notifyPropertyChange('activeTab', null);
+    // Initialize properties
+    this.set('tabs', this._tabs);
+    this.set('activeTab', null);
   }
 
   get tabs() {
@@ -21,10 +21,9 @@ class EditorManager extends Observable {
     return this._tabs.find(tab => tab.id === this._activeTabId) || null;
   }
 
-  // Allow runtime addition of custom commands
   addCommand(name, handler) {
     this._customCommands.set(name, handler);
-    console.log(`Added custom command: ${name}`);
+    console.log(`✅ Added custom command: ${name}`);
   }
 
   executeCommand(name, ...args) {
@@ -64,8 +63,10 @@ class EditorManager extends Observable {
       this._tabs.push(newTab);
       this._activeTabId = tabId;
       
-      this.notifyPropertyChange('tabs', this._tabs);
-      this.notifyPropertyChange('activeTab', newTab);
+      this.set('tabs', this._tabs);
+      this.set('activeTab', newTab);
+      
+      console.log(`📄 Opened file: ${fileName}`);
     } catch (error) {
       console.error('Failed to open file:', error);
     }
@@ -89,17 +90,17 @@ class EditorManager extends Observable {
         this.setActiveTab(newActiveTab.id);
       } else {
         this._activeTabId = null;
+        this.set('activeTab', null);
       }
     }
 
-    this.notifyPropertyChange('tabs', this._tabs);
-    this.notifyPropertyChange('activeTab', this.activeTab);
+    this.set('tabs', this._tabs);
   }
 
   setActiveTab(tabId) {
     this._tabs.forEach(tab => tab.isActive = tab.id === tabId);
     this._activeTabId = tabId;
-    this.notifyPropertyChange('activeTab', this.activeTab);
+    this.set('activeTab', this.activeTab);
   }
 
   updateTabContent(tabId, content) {
@@ -107,7 +108,7 @@ class EditorManager extends Observable {
     if (tab) {
       tab.content = content;
       tab.isDirty = true;
-      this.notifyPropertyChange('tabs', this._tabs);
+      this.set('tabs', this._tabs);
     }
   }
 
@@ -117,8 +118,8 @@ class EditorManager extends Observable {
       try {
         await this._fileSystem.writeFile(tab.path, tab.content);
         tab.isDirty = false;
-        this.notifyPropertyChange('tabs', this._tabs);
-        console.log(`Saved: ${tab.name}`);
+        this.set('tabs', this._tabs);
+        console.log(`💾 Saved: ${tab.name}`);
       } catch (error) {
         console.error('Failed to save file:', error);
       }
