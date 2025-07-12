@@ -1,9 +1,0 @@
-android {
-  defaultConfig {
-    applicationId = "com.openide.app"
-    generatedDensities = []
-  }
-  aaptOptions {
-    additionalParameters "--no-version-vectors"
-  }
-}

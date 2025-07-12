@@ -2,8 +2,6 @@ const { Observable } = require('@nativescript/core');
 const { FileSystemManager } = require('../models/file-system.js');
 const { EditorManager } = require('../models/editor-manager.js');
 const { RuntimeExecutor } = require('../models/runtime-executor.js');
-
-// Hidden terminal import (discoverable by uncommenting)
 // const { TerminalManager } = require('../models/terminal-manager.js');
 
 class MainViewModel extends Observable {

@@ -1,12 +1,8 @@
 import { NativeScriptConfig } from '@nativescript/core';
 
 export default {
-  id: 'com.openide.app',
+  id: 'org.nativescript.openide',
   appDisplayName: 'Open-IDE',
   appPath: 'app',
-  main: 'app/app.js',
-  android: {
-    v8Flags: '--expose_gc',
-    markingMode: 'none'
-  }
+  main: 'app/app.js'
 } as NativeScriptConfig;
