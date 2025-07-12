@@ -6,19 +6,21 @@
   
   <GridLayout rows="*, auto" class="main-container">
     <!-- Main Content Area -->
-    <GridLayout row="0" columns="200, *" class="content-area" visibility="{{ sidebarVisible ? 'visible' : 'collapsed' }}">
+    <GridLayout row="0" columns="200, *" class="content-area">
       
       <!-- File Explorer Sidebar -->
       <StackLayout col="0" class="sidebar">
         <Label text="📁 Files" class="sidebar-title" />
         <ScrollView class="file-tree">
-          <Repeater items="{{ fileSystem.fileTree }}">
-            <Repeater.itemTemplate>
-              <StackLayout class="file-item" tap="onFileSelect">
-                <Label text="{{ type === 'folder' ? '📁' : '📄' }} {{ name }}" class="file-name" />
-              </StackLayout>
-            </Repeater.itemTemplate>
-          </Repeater>
+          <StackLayout>
+            <Repeater items="{{ fileSystem.fileTree }}">
+              <Repeater.itemTemplate>
+                <StackLayout class="file-item" tap="onFileSelect">
+                  <Label text="{{ type === 'folder' ? '📁' : '📄' }} {{ name }}" class="file-name" />
+                </StackLayout>
+              </Repeater.itemTemplate>
+            </Repeater>
+          </StackLayout>
         </ScrollView>
       </StackLayout>
       
@@ -40,14 +42,14 @@
         
         <!-- Editor Content -->
         <TextView row="1" id="editor-textarea" 
-                  text="{{ editorManager.activeTab ? editorManager.activeTab.content : '' }}" 
+                  text="{{ editorManager.activeTab ? editorManager.activeTab.content : 'Welcome to Open-IDE!\n\nSelect a file from the sidebar to start editing.' }}" 
                   textChange="onEditorTextChange"
                   class="editor" />
       </GridLayout>
     </GridLayout>
     
     <!-- Console Panel -->
-    <GridLayout row="1" rows="auto, *" class="console-panel" visibility="{{ consoleVisible ? 'visible' : 'collapsed' }}">
+    <GridLayout row="1" rows="auto, *" class="console-panel" height="150">
       <GridLayout row="0" columns="*, auto, auto" class="console-header">
         <Label col="0" text="🖥️ Console" class="console-title" />
         <Button col="1" text="▶️" tap="onExecute" class="execute-btn" />
@@ -56,10 +58,10 @@
       
       <ScrollView row="1" class="console-output">
         <StackLayout class="console-content">
+          <Label text="Console ready. Execute code to see output here." class="console-text" />
           <Repeater items="{{ runtimeExecutor.history }}">
             <Repeater.itemTemplate>
               <StackLayout class="console-entry">
-                <Label text="{{ timestamp | date:'HH:mm:ss' }}" class="console-timestamp" />
                 <Label text="{{ output }}" class="console-text" textWrap="true" />
                 <Label text="{{ error }}" class="console-error" textWrap="true" visibility="{{ error ? 'visible' : 'collapsed' }}" />
               </StackLayout>
