@@ -29,8 +29,8 @@ export class FileSystemManager extends Observable {
   private async initializeWorkspace() {
     try {
       const workspaceFolder = Folder.fromPath(this._rootPath);
-      if (!workspaceFolder.exists) {
-        await workspaceFolder.create();
+      if (!Folder.exists(this._rootPath)) {
+        Folder.fromPath(this._rootPath).createSync();
         await this.createInitialFiles();
       }
       await this.loadFileTree();
@@ -152,7 +152,7 @@ Happy coding! 🚀`
     const nodes: FileNode[] = [];
     const folder = Folder.fromPath(folderPath);
 
-    if (!folder.exists) return nodes;
+    if (!Folder.exists(folderPath)) return nodes;
 
     const entities = await folder.getEntities();
     
@@ -201,8 +201,8 @@ Happy coding! 🚀`
     // Create parent directories if needed
     const parentPath = fullPath.substring(0, fullPath.lastIndexOf('/'));
     const parentFolder = Folder.fromPath(parentPath);
-    if (!parentFolder.exists) {
-      await parentFolder.create();
+    if (!Folder.exists(parentPath)) {
+      Folder.fromPath(parentPath).createSync();
     }
     
     await file.writeText(content);
@@ -212,7 +212,7 @@ Happy coding! 🚀`
   async deleteFile(relativePath: string): Promise<void> {
     const fullPath = this._rootPath + '/' + relativePath;
     const file = File.fromPath(fullPath);
-    if (file.exists) {
+    if (File.exists(fullPath)) {
       await file.remove();
       await this.loadFileTree();
     }
