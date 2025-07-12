@@ -8,7 +8,7 @@
     <!-- Main Content Area -->
     <TabView row="0" class="tab-view">
       
-      <!-- Project Explorer Tab -->
+      <!-- Project Explorer Tab - Only visible tab initially -->
       <TabViewItem title="📁 Explorer" class="tab-item">
         <GridLayout columns="200, *" class="explorer-content">
           
@@ -57,7 +57,7 @@
         </GridLayout>
       </TabViewItem>
       
-      <!-- Hidden Advanced Tabs (Discoverable) -->
+      <!-- Hidden Advanced Tabs (Discoverable) - Users can uncomment these -->
       <!-- 
       <TabViewItem title="🔌 Plugins" class="tab-item">
         <GridLayout class="plugins-content">
@@ -66,7 +66,7 @@
             <Label text="Extend Open-IDE functionality" class="feature-subtitle" />
             <ScrollView class="plugin-list">
               <StackLayout>
-                <Label text="No plugins loaded. Create plugins to extend the IDE." class="empty-state" />
+                <Label text="No plugins loaded. Uncomment plugin system to enable." class="empty-state" />
               </StackLayout>
             </ScrollView>
           </StackLayout>
