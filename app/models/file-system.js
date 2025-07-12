@@ -20,7 +20,7 @@ class FileSystemManager extends Observable {
     try {
       const workspaceFolder = Folder.fromPath(this._rootPath);
       if (!Folder.exists(this._rootPath)) {
-        await workspaceFolder.create();
+        workspaceFolder.createSync();
         await this.createInitialFiles();
       }
       await this.loadFileTree();
@@ -278,7 +278,7 @@ Happy coding! 🚀`
     const parentPath = fullPath.substring(0, fullPath.lastIndexOf('/'));
     const parentFolder = Folder.fromPath(parentPath);
     if (!Folder.exists(parentPath)) {
-      await parentFolder.create();
+      parentFolder.createSync();
     }
     
     await file.writeText(content);
