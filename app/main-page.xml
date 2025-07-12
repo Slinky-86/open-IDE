@@ -1,6 +1,6 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="page">
-  <ActionBar title="Open-IDE" class="action-bar" />
+  <ActionBar title="Open-IDE Test" class="action-bar" />
   <GridLayout class="page">
-    <Label text="Hello NativeScript!" class="h1 text-center" />
+    <Label text="Hello NativeScript! If you see this, the app is working." class="h1 text-center" />
   </GridLayout>
 </Page>
