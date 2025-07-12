@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Base NativeScript styles that are being referenced -->
+    <style name="AppThemeBase" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/ns_primary</item>
         <item name="colorPrimaryDark">@color/ns_primaryDark</item>
         <item name="colorAccent">@color/ns_accent</item>
+    </style>
+
+    <style name="NativeScriptToolbarStyleBase" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/ns_primary</item>
+        <item name="android:titleTextColor">@android:color/white</item>
+    </style>
+
+    <!-- Main application theme -->
+    <style name="AppTheme" parent="AppThemeBase">
+        <!-- Customize your theme here -->
     </style>
 
     <!-- Launch screen theme -->
