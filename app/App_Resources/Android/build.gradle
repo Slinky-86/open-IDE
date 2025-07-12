@@ -1,0 +1,11 @@
+android {
+  defaultConfig {
+    minSdkVersion 21
+    targetSdkVersion 34
+    compileSdkVersion 34
+  }
+  
+  aaptOptions {
+    additionalParameters "--no-version-vectors"
+  }
+}

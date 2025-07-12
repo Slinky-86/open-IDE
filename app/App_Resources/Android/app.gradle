@@ -1,0 +1,10 @@
+android {
+  defaultConfig {
+    applicationId "org.nativescript.openide"
+    generatedDensities = []
+  }
+  
+  aaptOptions {
+    additionalParameters "--no-version-vectors"
+  }
+}
