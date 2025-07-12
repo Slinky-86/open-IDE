@@ -27,8 +27,8 @@
     "clean": "ns clean"
   },
   "dependencies": {
-    "@nativescript/core": "~8.8.0",
-    "@nativescript/android": "~8.8.0"
+    "@nativescript/android": "~8.8.0",
+    "@nativescript/core": "~8.8.0"
   },
   "devDependencies": {
     "@nativescript/preview-cli": "^1.0.14",
