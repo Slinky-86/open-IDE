@@ -1,0 +1,72 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="page">
+  <ActionBar title="Open-IDE" class="action-bar">
+    <ActionItem text="⟲" tap="onRefresh" ios.position="right" android.position="actionBar" />
+    <ActionItem text="+" tap="onNewFile" ios.position="right" android.position="actionBar" />
+  </ActionBar>
+  
+  <GridLayout rows="*, auto" class="main-container">
+    <!-- Main Content Area -->
+    <GridLayout row="0" columns="200, *" class="content-area" visibility="{{ sidebarVisible ? 'visible' : 'collapsed' }}">
+      
+      <!-- File Explorer Sidebar -->
+      <StackLayout col="0" class="sidebar">
+        <Label text="📁 Files" class="sidebar-title" />
+        <ScrollView class="file-tree">
+          <Repeater items="{{ fileSystem.fileTree }}">
+            <Repeater.itemTemplate>
+              <StackLayout class="file-item" tap="onFileSelect">
+                <Label text="{{ type === 'folder' ? '📁' : '📄' }} {{ name }}" class="file-name" />
+              </StackLayout>
+            </Repeater.itemTemplate>
+          </Repeater>
+        </ScrollView>
+      </StackLayout>
+      
+      <!-- Editor Area -->
+      <GridLayout col="1" rows="auto, *" class="editor-area">
+        <!-- Editor Tabs -->
+        <ScrollView row="0" orientation="horizontal" class="tabs-container">
+          <StackLayout orientation="horizontal" class="tabs">
+            <Repeater items="{{ editorManager.tabs }}">
+              <Repeater.itemTemplate>
+                <GridLayout columns="*, auto" class="tab {{ isActive ? 'active' : '' }}" tap="onTabSelect">
+                  <Label col="0" text="{{ name }}" class="tab-name" />
+                  <Label col="1" text="×" class="tab-close" tap="onTabClose" />
+                </GridLayout>
+              </Repeater.itemTemplate>
+            </Repeater>
+          </StackLayout>
+        </ScrollView>
+        
+        <!-- Editor Content -->
+        <TextView row="1" id="editor-textarea" 
+                  text="{{ editorManager.activeTab ? editorManager.activeTab.content : '' }}" 
+                  textChange="onEditorTextChange"
+                  class="editor" />
+      </GridLayout>
+    </GridLayout>
+    
+    <!-- Console Panel -->
+    <GridLayout row="1" rows="auto, *" class="console-panel" visibility="{{ consoleVisible ? 'visible' : 'collapsed' }}">
+      <GridLayout row="0" columns="*, auto, auto" class="console-header">
+        <Label col="0" text="🖥️ Console" class="console-title" />
+        <Button col="1" text="▶️" tap="onExecute" class="execute-btn" />
+        <Button col="2" text="🗑️" tap="onClearConsole" class="clear-btn" />
+      </GridLayout>
+      
+      <ScrollView row="1" class="console-output">
+        <StackLayout class="console-content">
+          <Repeater items="{{ runtimeExecutor.history }}">
+            <Repeater.itemTemplate>
+              <StackLayout class="console-entry">
+                <Label text="{{ timestamp | date:'HH:mm:ss' }}" class="console-timestamp" />
+                <Label text="{{ output }}" class="console-text" textWrap="true" />
+                <Label text="{{ error }}" class="console-error" textWrap="true" visibility="{{ error ? 'visible' : 'collapsed' }}" />
+              </StackLayout>
+            </Repeater.itemTemplate>
+          </Repeater>
+        </StackLayout>
+      </ScrollView>
+    </GridLayout>
+  </GridLayout>
+</Page>
