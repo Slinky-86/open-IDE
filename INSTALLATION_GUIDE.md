@@ -22,8 +22,20 @@ choco install nodejs
 
 ## 🔧 **Step 2: Install NativeScript CLI**
 ```bash
-# Install NativeScript CLI globally
+# Install NativeScript CLI globally (try these in order)
+
+# Option 1: Current official package
 npm install -g @nativescript/cli
+
+# Option 2: If above fails, try the legacy package name
+npm install -g nativescript
+
+# Option 3: Clear npm cache first, then try again
+npm cache clean --force
+npm install -g @nativescript/cli
+
+# Option 4: Use specific version
+npm install -g @nativescript/cli@latest
 
 # Verify installation
 ns --version
