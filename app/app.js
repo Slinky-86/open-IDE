@@ -1,3 +1,3 @@
-const { Application } = require('@nativescript/core');
+import { Application } from '@nativescript/core';
 
-Application.run({ moduleName: 'app-root' });
+Application.run({ moduleName: 'main-page' });
