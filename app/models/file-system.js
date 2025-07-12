@@ -18,14 +18,25 @@ class FileSystemManager extends Observable {
 
   async initializeWorkspace() {
     try {
-      const workspaceFolder = Folder.fromPath(this._rootPath);
       if (!Folder.exists(this._rootPath)) {
-        workspaceFolder.createSync();
+        // Create the directory by ensuring it exists
+        await this.ensureDirectoryExists(this._rootPath);
         await this.createInitialFiles();
       }
       await this.loadFileTree();
     } catch (error) {
       console.error('Failed to initialize workspace:', error);
+    }
+  }
+
+  async ensureDirectoryExists(path) {
+    try {
+      // Create a dummy file to ensure the directory exists, then remove it
+      const dummyFile = File.fromPath(path + '/.dummy');
+      await dummyFile.writeText('');
+      await dummyFile.remove();
+    } catch (error) {
+      // Directory creation failed, but that's okay - it might already exist
     }
   }
 
@@ -276,9 +287,8 @@ Happy coding! 🚀`
     const file = File.fromPath(fullPath);
     
     const parentPath = fullPath.substring(0, fullPath.lastIndexOf('/'));
-    const parentFolder = Folder.fromPath(parentPath);
     if (!Folder.exists(parentPath)) {
-      parentFolder.createSync();
+      await this.ensureDirectoryExists(parentPath);
     }
     
     await file.writeText(content);

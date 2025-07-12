@@ -70,9 +70,11 @@ class ProjectManager extends Observable {
 
     try {
       // Create project directory
-      const projectFolder = Folder.fromPath(projectPath);
       if (!Folder.exists(projectPath)) {
-        projectFolder.createSync();
+        // Ensure directory exists by creating a dummy file
+        const dummyFile = File.fromPath(projectPath + '/.dummy');
+        await dummyFile.writeText('');
+        await dummyFile.remove();
       }
 
       // Generate project files from template
@@ -105,9 +107,11 @@ class ProjectManager extends Observable {
       
       // Create parent directories if needed
       const parentPath = fullPath.substring(0, fullPath.lastIndexOf('/'));
-      const parentFolder = Folder.fromPath(parentPath);
       if (!Folder.exists(parentPath)) {
-        parentFolder.createSync();
+        // Ensure parent directory exists
+        const dummyFile = File.fromPath(parentPath + '/.dummy');
+        await dummyFile.writeText('');
+        await dummyFile.remove();
       }
       
       await file.writeText(content);
