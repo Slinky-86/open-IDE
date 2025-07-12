@@ -16,6 +16,16 @@
     "editor",
     "theia"
   ],
+  "scripts": {
+    "android": "ns build android",
+    "android.debug": "ns build android",
+    "android.release": "ns build android --release",
+    "ios": "ns build ios",
+    "ios.debug": "ns build ios",
+    "ios.release": "ns build ios --release",
+    "preview": "ns preview",
+    "clean": "ns clean"
+  },
   "dependencies": {
     "@nativescript/core": "~8.8.0"
   },
