@@ -17,6 +17,155 @@ class RuntimeExecutor extends Observable {
     this._globalContext = context;
     // Make it globally accessible
     global.app = context;
+    
+    // Expose runtime API for Theia-like functionality
+    this.exposeRuntimeAPI();
+  }
+
+  // Expose public API for runtime modifications (like Theia)
+  exposeRuntimeAPI() {
+    // Create global IDE API
+    global.IDE = {
+      // File System API
+      fs: {
+        readFile: async (path) => {
+          return await this._fileSystem.readFile(path);
+        },
+        writeFile: async (path, content) => {
+          await this._fileSystem.writeFile(path, content);
+          await this._fileSystem.loadFileTree(); // Refresh UI
+        },
+        createFile: async (path, content = '') => {
+          await this._fileSystem.createFile(path, content);
+        },
+        deleteFile: async (path) => {
+          await this._fileSystem.deleteFile(path);
+        },
+        listFiles: () => {
+          return this._fileSystem.fileTree;
+        }
+      },
+      
+      // Editor API
+      editor: {
+        openFile: async (path) => {
+          await this._globalContext.editor.openFile(path);
+        },
+        getCurrentFile: () => {
+          return this._globalContext.editor.activeTab;
+        },
+        getContent: () => {
+          const tab = this._globalContext.editor.activeTab;
+          return tab ? tab.content : '';
+        },
+        setContent: (content) => {
+          const tab = this._globalContext.editor.activeTab;
+          if (tab) {
+            this._globalContext.editor.updateTabContent(tab.id, content);
+          }
+        },
+        saveFile: async () => {
+          const tab = this._globalContext.editor.activeTab;
+          if (tab) {
+            await this._globalContext.editor.saveTab(tab.id);
+          }
+        },
+        addCommand: (name, handler) => {
+          this._globalContext.editor.addCommand(name, handler);
+        },
+        executeCommand: (name, ...args) => {
+          return this._globalContext.editor.executeCommand(name, ...args);
+        }
+      },
+      
+      // UI API
+      ui: {
+        showMessage: (message) => {
+          alert(message);
+        },
+        addMenuItem: (text, callback) => {
+          this.addMenuItem(text, callback);
+        },
+        modifyElement: (id, properties) => {
+          this.modifyUI(id, properties);
+        },
+        getElement: (id) => {
+          if (this._globalContext.ui && this._globalContext.ui.page) {
+            return this._globalContext.ui.page.getViewById(id);
+          }
+          return null;
+        }
+      },
+      
+      // Runtime API
+      runtime: {
+        execute: async (code) => {
+          return await this.executeCode(code);
+        },
+        executeFile: async (path) => {
+          return await this.executeFile(path);
+        },
+        getHistory: () => {
+          return this._history;
+        },
+        clearHistory: () => {
+          this.clearHistory();
+        }
+      },
+      
+      // Plugin API
+      plugins: {
+        register: (name, plugin) => {
+          if (!global.IDE._plugins) {
+            global.IDE._plugins = new Map();
+          }
+          global.IDE._plugins.set(name, plugin);
+          console.log(`Plugin '${name}' registered`);
+          
+          // Auto-initialize if plugin has init method
+          if (plugin.init && typeof plugin.init === 'function') {
+            plugin.init(global.IDE);
+          }
+        },
+        get: (name) => {
+          return global.IDE._plugins ? global.IDE._plugins.get(name) : null;
+        },
+        list: () => {
+          return global.IDE._plugins ? Array.from(global.IDE._plugins.keys()) : [];
+        }
+      },
+      
+      // Events API
+      events: {
+        on: (event, handler) => {
+          if (!global.IDE._events) {
+            global.IDE._events = new Map();
+          }
+          if (!global.IDE._events.has(event)) {
+            global.IDE._events.set(event, []);
+          }
+          global.IDE._events.get(event).push(handler);
+        },
+        emit: (event, data) => {
+          if (global.IDE._events && global.IDE._events.has(event)) {
+            global.IDE._events.get(event).forEach(handler => {
+              try {
+                handler(data);
+              } catch (error) {
+                console.error(`Event handler error for '${event}':`, error);
+              }
+            });
+          }
+        }
+      }
+    };
+    
+    // Backward compatibility
+    global.app.api = global.IDE;
+    
+    console.log('🚀 IDE Runtime API exposed globally!');
+    console.log('📖 Use global.IDE to access all functionality');
+    console.log('💡 Example: global.IDE.editor.openFile("welcome.js")');
   }
 
   async executeCode(code) {

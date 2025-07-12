@@ -16,7 +16,7 @@ function navigatingTo(args) {
 function setupEventHandlers(page, viewModel) {
   
   // File Explorer Events
-  page.on('fileNodeTap', async (args) => {
+  page.getViewById('file-tree').on('itemTap', async (args) => {
     const fileNode = args.object.bindingContext;
     if (fileNode.type === 'file') {
       await viewModel.editorManager.openFile(fileNode.path);
@@ -24,7 +24,122 @@ function setupEventHandlers(page, viewModel) {
   });
 
   // Editor Tab Events
-  page.on('tabTap', (args) => {
+  const tabBar = page.getViewById('tab-bar');
+  if (tabBar) {
+    tabBar.on('itemTap', (args) => {
+      const tab = args.object.bindingContext;
+      viewModel.editorManager.setActiveTab(tab.id);
+    });
+  }
+
+  // Action button events
+  const saveBtn = page.getViewById('save-btn');
+  if (saveBtn) {
+    saveBtn.on('tap', async () => {
+      const activeTab = viewModel.editorManager.activeTab;
+      if (activeTab) {
+        await viewModel.editorManager.saveTab(activeTab.id);
+      }
+    });
+  }
+
+  const runBtn = page.getViewById('run-btn');
+  if (runBtn) {
+    runBtn.on('tap', async () => {
+      await viewModel.executeCurrentFile();
+    });
+  }
+
+  const consoleBtn = page.getViewById('console-btn');
+  if (consoleBtn) {
+    consoleBtn.on('tap', () => {
+      viewModel.toggleConsole();
+    });
+  }
+
+  const clearBtn = page.getViewById('clear-btn');
+  if (clearBtn) {
+    clearBtn.on('tap', () => {
+      viewModel.runtimeExecutor.clearHistory();
+    });
+  }
+
+  // Editor text change
+  const editor = page.getViewById('editor-textarea');
+  if (editor) {
+    editor.on('textChange', (args) => {
+      const activeTab = viewModel.editorManager.activeTab;
+      if (activeTab) {
+        viewModel.editorManager.updateTabContent(activeTab.id, args.object.text);
+      }
+    });
+  }
+}
+
+// Event handlers for XML bindings
+function onFileNodeTap(args) {
+  const page = args.object.page;
+  const viewModel = page.bindingContext;
+  const fileNode = args.object.bindingContext;
+  
+  if (fileNode.type === 'file') {
+    viewModel.editorManager.openFile(fileNode.path);
+  }
+}
+
+function onTabTap(args) {
+  const page = args.object.page;
+  const viewModel = page.bindingContext;
+  const tab = args.object.bindingContext;
+  viewModel.editorManager.setActiveTab(tab.id);
+}
+
+function onTabClose(args) {
+  const page = args.object.page;
+  const viewModel = page.bindingContext;
+  const tab = args.object.bindingContext;
+  viewModel.editorManager.closeTab(tab.id);
+  args.object.stopPropagation();
+}
+
+function onEditorTextChange(args) {
+  const page = args.object.page;
+  const viewModel = page.bindingContext;
+  const activeTab = viewModel.editorManager.activeTab;
+  if (activeTab) {
+    viewModel.editorManager.updateTabContent(activeTab.id, args.object.text);
+  }
+}
+
+function onSaveFile(args) {
+  const page = args.object.page;
+  const viewModel = page.bindingContext;
+  const activeTab = viewModel.editorManager.activeTab;
+  if (activeTab) {
+    viewModel.editorManager.saveTab(activeTab.id);
+  }
+}
+
+function onRunFile(args) {
+  const page = args.object.page;
+  const viewModel = page.bindingContext;
+  viewModel.executeCurrentFile();
+}
+
+function onClearConsole(args) {
+  const page = args.object.page;
+  const viewModel = page.bindingContext;
+  viewModel.runtimeExecutor.clearHistory();
+}
+
+// Export event handlers for XML binding
+exports.onFileNodeTap = onFileNodeTap;
+exports.onTabTap = onTabTap;
+exports.onTabClose = onTabClose;
+exports.onEditorTextChange = onEditorTextChange;
+exports.onSaveFile = onSaveFile;
+exports.onRunFile = onRunFile;
+exports.onClearConsole = onClearConsole;
     const tab = args.object.bindingContext;
     viewModel.editorManager.setActiveTab(tab.id);
   });
