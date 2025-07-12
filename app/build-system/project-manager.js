@@ -71,8 +71,8 @@ class ProjectManager extends Observable {
     try {
       // Create project directory
       const projectFolder = Folder.fromPath(projectPath);
-      if (!projectFolder.exists) {
-        await projectFolder.create();
+      if (!Folder.exists(projectPath)) {
+        Folder.fromPath(projectPath).createSync();
       }
 
       // Generate project files from template
@@ -106,8 +106,8 @@ class ProjectManager extends Observable {
       // Create parent directories if needed
       const parentPath = fullPath.substring(0, fullPath.lastIndexOf('/'));
       const parentFolder = Folder.fromPath(parentPath);
-      if (!parentFolder.exists) {
-        await parentFolder.create();
+      if (!Folder.exists(parentPath)) {
+        Folder.fromPath(parentPath).createSync();
       }
       
       await file.writeText(content);
@@ -143,8 +143,8 @@ class ProjectManager extends Observable {
       const projectsDir = knownFolders.documents().path + '/open-ide/projects';
       const projectsFolder = Folder.fromPath(projectsDir);
       
-      if (!projectsFolder.exists) {
-        await projectsFolder.create();
+      if (!Folder.exists(projectsDir)) {
+        Folder.fromPath(projectsDir).createSync();
         return;
       }
 
@@ -155,7 +155,7 @@ class ProjectManager extends Observable {
         if (entity instanceof Folder) {
           try {
             const configFile = File.fromPath(entity.path + '/project.json');
-            if (configFile.exists) {
+            if (File.exists(entity.path + '/project.json')) {
               const configContent = await configFile.readText();
               const config = JSON.parse(configContent);
               
@@ -202,7 +202,7 @@ class ProjectManager extends Observable {
     
     try {
       const projectFolder = Folder.fromPath(project.path);
-      if (projectFolder.exists) {
+      if (Folder.exists(project.path)) {
         await projectFolder.remove();
       }
       
@@ -352,6 +352,17 @@ console.log("Drawer app loaded!");`;
   margin-bottom: 10;
   text-align: left;
 }`;
+  }
+
+  async prepareBuildEnvironment(buildTask) {
+    // Create build directories
+    const buildDir = knownFolders.documents().path + '/open-ide/builds/' + buildTask.id;
+    const buildFolder = Folder.fromPath(buildDir);
+    if (!Folder.exists(buildDir)) {
+      Folder.fromPath(buildDir).createSync();
+    }
+    
+    buildTask.buildDir = buildDir;
   }
 }
 
