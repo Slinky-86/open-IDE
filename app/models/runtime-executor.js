@@ -5,9 +5,7 @@ class RuntimeExecutor extends Observable {
     super();
     this._history = [];
     this._fileSystem = fileSystem;
-    this._globalContext = {};
     
-    // Initialize properties
     this.set('history', this._history);
   }
 
@@ -15,150 +13,125 @@ class RuntimeExecutor extends Observable {
     return this._history;
   }
 
-  setGlobalContext(context) {
-    this._globalContext = context;
-    global.app = context;
-    this.exposeRuntimeAPI();
+  exposeBasicAPI() {
+    // Expose basic runtime API for hot reload and file operations
+    global.openIDE = {
+      // File operations
+      createFile: async (path, content = '') => {
+        await this._fileSystem.createFile(path, content);
+        console.log(`✅ Created file: ${path}`);
+      },
+      
+      readFile: async (path) => {
+        return await this._fileSystem.readFile(path);
+      },
+      
+      writeFile: async (path, content) => {
+        await this._fileSystem.writeFile(path, content);
+        console.log(`💾 Saved file: ${path}`);
+      },
+      
+      deleteFile: async (path) => {
+        await this._fileSystem.deleteFile(path);
+        console.log(`🗑️ Deleted file: ${path}`);
+      },
+      
+      listFiles: () => {
+        return this._fileSystem.fileTree;
+      },
+      
+      // Code execution
+      execute: async (code) => {
+        return await this.executeCode(code);
+      },
+      
+      // Hot reload trigger
+      hotReload: () => {
+        console.log("🔥 Hot reload triggered via API");
+        // Trigger hot reload functionality
+      },
+      
+      // Basic utilities
+      log: (...args) => {
+        console.log(...args);
+      },
+      
+      // Hidden reference for advanced features
+      _ui: null,
+      _advanced: null
+    };
+    
+    console.log('🚀 Open-IDE Runtime API ready!');
+    console.log('📖 Use global.openIDE to access functionality');
   }
 
-  exposeRuntimeAPI() {
-    global.IDE = {
-      // File System API
-      fs: {
-        readFile: async (path) => {
-          return await this._fileSystem.readFile(path);
-        },
-        writeFile: async (path, content) => {
-          await this._fileSystem.writeFile(path, content);
-          await this._fileSystem.loadFileTree();
-        },
-        createFile: async (path, content = '') => {
-          await this._fileSystem.createFile(path, content);
-        },
-        deleteFile: async (path) => {
-          await this._fileSystem.deleteFile(path);
-        },
-        listFiles: () => {
-          return this._fileSystem.fileTree;
-        }
-      },
-      
-      // Editor API
-      editor: {
-        openFile: async (path) => {
-          await this._globalContext.editor.openFile(path);
-        },
-        getCurrentFile: () => {
-          return this._globalContext.editor.activeTab;
-        },
-        getContent: () => {
-          const tab = this._globalContext.editor.activeTab;
-          return tab ? tab.content : '';
-        },
-        setContent: (content) => {
-          const tab = this._globalContext.editor.activeTab;
-          if (tab) {
-            this._globalContext.editor.updateTabContent(tab.id, content);
-          }
-        },
-        saveFile: async () => {
-          const tab = this._globalContext.editor.activeTab;
-          if (tab) {
-            await this._globalContext.editor.saveTab(tab.id);
-          }
-        },
-        addCommand: (name, handler) => {
-          this._globalContext.editor.addCommand(name, handler);
-        },
-        executeCommand: (name, ...args) => {
-          return this._globalContext.editor.executeCommand(name, ...args);
-        },
-        getCommands: () => {
-          return this._globalContext.editor.getCommands();
-        }
-      },
-      
-      // UI API
-      ui: {
-        showMessage: (message) => {
-          alert(message);
-        },
-        addMenuItem: (text, callback) => {
-          this.addMenuItem(text, callback);
-        },
-        getElement: (id) => {
-          if (this._globalContext.ui && this._globalContext.ui.page) {
-            return this._globalContext.ui.page.getViewById(id);
-          }
-          return null;
-        }
-      },
-      
-      // Runtime API
-      runtime: {
-        execute: async (code) => {
-          return await this.executeCode(code);
-        },
-        executeFile: async (path) => {
-          return await this.executeFile(path);
-        },
-        getHistory: () => {
-          return this._history;
-        },
-        clearHistory: () => {
-          this.clearHistory();
-        }
-      },
-      
-      // Plugin API
+  // Hidden advanced API (discoverable)
+  /*
+  exposeAdvancedAPI() {
+    global.openIDE._advanced = {
+      // Plugin system
       plugins: {
         register: (name, plugin) => {
-          if (!global.IDE._plugins) {
-            global.IDE._plugins = new Map();
+          if (!global.openIDE._plugins) {
+            global.openIDE._plugins = new Map();
           }
-          global.IDE._plugins.set(name, plugin);
+          global.openIDE._plugins.set(name, plugin);
           console.log(`🔌 Plugin '${name}' registered`);
           
           if (plugin.init && typeof plugin.init === 'function') {
-            plugin.init(global.IDE);
+            plugin.init(global.openIDE);
           }
         },
+        
         get: (name) => {
-          return global.IDE._plugins ? global.IDE._plugins.get(name) : null;
+          return global.openIDE._plugins ? global.openIDE._plugins.get(name) : null;
         },
+        
         list: () => {
-          return global.IDE._plugins ? Array.from(global.IDE._plugins.keys()) : [];
+          return global.openIDE._plugins ? Array.from(global.openIDE._plugins.keys()) : [];
         }
       },
       
-      // Events API
-      events: {
-        on: (event, handler) => {
-          if (!global.IDE._events) {
-            global.IDE._events = new Map();
+      // Terminal commands
+      terminal: {
+        execute: async (command) => {
+          console.log(`🖥️ Executing: ${command}`);
+          // Implement terminal command execution
+          if (command.startsWith('ns build')) {
+            console.log('🔨 Building NativeScript app...');
+            // Trigger build process
           }
-          if (!global.IDE._events.has(event)) {
-            global.IDE._events.set(event, []);
-          }
-          global.IDE._events.get(event).push(handler);
         },
-        emit: (event, data) => {
-          if (global.IDE._events && global.IDE._events.has(event)) {
-            global.IDE._events.get(event).forEach(handler => {
-              try {
-                handler(data);
-              } catch (error) {
-                console.error(`Event handler error for '${event}':`, error);
-              }
-            });
+        
+        addCommand: (name, handler) => {
+          if (!global.openIDE._commands) {
+            global.openIDE._commands = new Map();
           }
+          global.openIDE._commands.set(name, handler);
+        }
+      },
+      
+      // UI manipulation
+      ui: {
+        addTab: (title, content) => {
+          console.log(`➕ Adding tab: ${title}`);
+          // Add custom tab functionality
+        },
+        
+        showDialog: (message, options = {}) => {
+          alert(message);
+        },
+        
+        addMenuItem: (text, callback) => {
+          console.log(`📋 Adding menu item: ${text}`);
+          // Add menu item functionality
         }
       }
     };
     
-    console.log('🚀 IDE Runtime API exposed globally!');
-    console.log('📖 Use global.IDE to access all functionality');
+    console.log('🔧 Advanced API features unlocked!');
   }
+  */
 
   async executeCode(code) {
     const result = {
@@ -182,15 +155,13 @@ class RuntimeExecutor extends Observable {
       };
 
       const context = {
-        ...this._globalContext,
         console: console,
         setTimeout: setTimeout,
         setInterval: setInterval,
         clearTimeout: clearTimeout,
         clearInterval: clearInterval,
-        require: this.createRequireFunction(),
         global: global,
-        addMenuItem: this.addMenuItem.bind(this)
+        openIDE: global.openIDE
       };
 
       const func = new Function('context', `
@@ -217,54 +188,9 @@ class RuntimeExecutor extends Observable {
     return result;
   }
 
-  async executeFile(filePath) {
-    try {
-      const code = await this._fileSystem.readFile(filePath);
-      return await this.executeCode(code);
-    } catch (error) {
-      return {
-        output: `❌ Failed to execute file: ${error.message}`,
-        error: error.message,
-        timestamp: new Date()
-      };
-    }
-  }
-
-  async loadExtensions() {
-    try {
-      const extensionFile = 'app-extensions.js';
-      const result = await this.executeFile(extensionFile);
-      console.log('🔧 Extensions loaded:', result.output);
-    } catch (error) {
-      console.log('ℹ️ No extensions file found or failed to load');
-    }
-  }
-
   clearHistory() {
     this._history = [];
     this.set('history', this._history);
-  }
-
-  createRequireFunction() {
-    return (moduleName) => {
-      switch (moduleName) {
-        case '@nativescript/core':
-          return require('@nativescript/core');
-        default:
-          throw new Error(`Module '${moduleName}' not found`);
-      }
-    };
-  }
-
-  addMenuItem(text, callback) {
-    if (this._globalContext.ui && this._globalContext.ui.page) {
-      const { ActionItem } = require('@nativescript/core');
-      const actionItem = new ActionItem();
-      actionItem.text = text;
-      actionItem.on('tap', callback);
-      this._globalContext.ui.page.actionBar.actionItems.addItem(actionItem);
-      console.log(`➕ Added menu item: ${text}`);
-    }
   }
 }
 

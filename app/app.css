@@ -1,4 +1,4 @@
-/* Open-IDE Styles - VS Code Dark Theme Inspired */
+/* Open-IDE - Clean Mobile Development Environment */
 
 .page {
   background-color: #1e1e1e;
@@ -7,10 +7,9 @@
 }
 
 .action-bar {
-  background-color: #2d2d2d;
-  color: #d4d4d4;
-  border-bottom-width: 1;
-  border-bottom-color: #3e3e3e;
+  background-color: #007acc;
+  color: #ffffff;
+  border-bottom-width: 0;
 }
 
 /* Main Layout */
@@ -18,7 +17,20 @@
   background-color: #1e1e1e;
 }
 
-.content-area {
+.tab-view {
+  background-color: #1e1e1e;
+  tab-background-color: #2d2d2d;
+  tab-text-color: #d4d4d4;
+  selected-tab-text-color: #ffffff;
+  android-selected-tab-highlight-color: #007acc;
+}
+
+.tab-item {
+  background-color: #1e1e1e;
+}
+
+/* Explorer Content */
+.explorer-content {
   background-color: #1e1e1e;
 }
 
@@ -43,9 +55,9 @@
 }
 
 .file-item {
-  padding: 6 8;
-  margin: 1 0;
-  border-radius: 3;
+  padding: 8;
+  margin: 2 0;
+  border-radius: 4;
 }
 
 .file-item:active {
@@ -121,6 +133,7 @@
   font-size: 14;
   padding: 16;
   border-width: 0;
+  line-height: 1.5;
 }
 
 /* Console Panel */
@@ -146,7 +159,7 @@
 .execute-btn, .clear-btn {
   background-color: #007acc;
   color: #ffffff;
-  border-radius: 3;
+  border-radius: 4;
   border-width: 0;
   padding: 6 12;
   margin-left: 8;
@@ -192,18 +205,77 @@
   line-height: 1.4;
 }
 
-/* Utility Classes */
-.h1 {
-  font-size: 24;
+/* Hidden Advanced Features Styles (Discoverable) */
+/*
+.plugins-content, .extensions-content, .terminal-content {
+  background-color: #1e1e1e;
+  padding: 16;
+}
+
+.feature-title {
+  font-size: 18;
   font-weight: bold;
-  color: #d4d4d4;
-}
-
-.text-center {
+  color: #007acc;
   text-align: center;
+  margin-top: 50;
 }
 
-/* Responsive adjustments */
+.terminal-header {
+  background-color: #2d2d2d;
+  padding: 8 12;
+  border-bottom-width: 1;
+  border-bottom-color: #3e3e3e;
+}
+
+.terminal-title {
+  font-size: 14;
+  font-weight: bold;
+  color: #cccccc;
+}
+
+.terminal-body {
+  background-color: #181818;
+}
+
+.command-input {
+  background-color: #2d2d2d;
+  color: #d4d4d4;
+  border-width: 1;
+  border-color: #3e3e3e;
+  border-radius: 4;
+  padding: 8;
+  margin: 8;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.terminal-output {
+  background-color: #181818;
+  padding: 8;
+}
+
+.terminal-text {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 12;
+  color: #d4d4d4;
+  line-height: 1.4;
+}
+
+.syntax-keywords {
+  color: #569cd6;
+  font-weight: bold;
+}
+
+.syntax-strings {
+  color: #ce9178;
+}
+
+.syntax-comments {
+  color: #6a9955;
+  font-style: italic;
+}
+*/
+
+/* Responsive Design */
 @media (max-width: 600) {
   .sidebar {
     width: 150;

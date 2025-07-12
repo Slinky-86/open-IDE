@@ -11,10 +11,37 @@ class MainViewModel extends Observable {
     this._editorManager = new EditorManager(this._fileSystem);
     this._runtimeExecutor = new RuntimeExecutor(this._fileSystem);
     
+    // Welcome text for clean start
+    this._welcomeText = `// Welcome to Open-IDE! 🚀
+// A mobile development environment with hot reload
+
+// Getting Started:
+// 1. Create files using the + button
+// 2. Write your code here
+// 3. Use the ▶️ button to execute
+// 4. Use ⟲ to hot reload your changes
+
+// Hot Reload API:
+// Modify this code and hit refresh to see changes!
+
+console.log("Open-IDE is ready!");
+
+// Access the runtime API:
+if (global.openIDE) {
+  console.log("Runtime API available!");
+  console.log("Available methods:", Object.keys(global.openIDE));
+}
+
+// Example: Create a new file programmatically
+// global.openIDE.createFile('my-script.js', 'console.log("Hello!");');
+
+// Start building your mobile development environment!`;
+    
     // Initialize properties
     this.set('fileSystem', this._fileSystem);
     this.set('editorManager', this._editorManager);
     this.set('runtimeExecutor', this._runtimeExecutor);
+    this.set('welcomeText', this._welcomeText);
     
     this.initializeApp();
   }
@@ -31,50 +58,42 @@ class MainViewModel extends Observable {
     return this._runtimeExecutor;
   }
 
+  get welcomeText() {
+    return this._welcomeText;
+  }
+
   async initializeApp() {
     try {
-      console.log('Initializing Open-IDE...');
+      // Set up basic runtime API
+      this._runtimeExecutor.exposeBasicAPI();
       
-      // Set up global context for runtime modifications
-      const globalContext = {
-        fileSystem: this._fileSystem,
-        editor: this._editorManager,
-        executor: this._runtimeExecutor,
-        ui: null // Will be set when page is loaded
-      };
+      // Load any existing extensions (hidden feature)
+      // this.loadHiddenExtensions();
       
-      this._runtimeExecutor.setGlobalContext(globalContext);
-      
-      // Load extensions after initialization
-      setTimeout(() => {
-        this._runtimeExecutor.loadExtensions();
-      }, 2000);
-      
-      console.log('Open-IDE initialized successfully');
     } catch (error) {
       console.error('Failed to initialize app:', error);
     }
   }
 
   setUIReference(uiRef) {
-    const context = global.app;
-    if (context) {
-      context.ui = uiRef;
+    this._uiRef = uiRef;
+    if (global.openIDE) {
+      global.openIDE._ui = uiRef;
     }
   }
 
-  async executeCurrentFile() {
+  async executeCurrentCode() {
     const activeTab = this._editorManager.activeTab;
     if (activeTab) {
       await this._runtimeExecutor.executeCode(activeTab.content);
     } else {
-      await this._runtimeExecutor.executeCode('console.log("No file selected. Open a file to execute code.");');
+      await this._runtimeExecutor.executeCode('console.log("No file selected. Create a file to start coding!");');
     }
   }
 
-  async refreshApp() {
+  async hotReload() {
     try {
-      console.log('Refreshing Open-IDE...');
+      console.log('🔥 Hot reloading...');
       
       // Save all open files
       await this._editorManager.saveAllTabs();
@@ -82,37 +101,84 @@ class MainViewModel extends Observable {
       // Reload file system
       await this._fileSystem.loadFileTree();
       
-      // Reload extensions for hot reload
-      await this._runtimeExecutor.loadExtensions();
+      // Re-execute any auto-reload scripts
+      await this.executeAutoReloadScripts();
       
-      console.log('App refreshed - hot reload complete');
+      console.log('✅ Hot reload complete!');
     } catch (error) {
-      console.error('Failed to refresh app:', error);
+      console.error('❌ Hot reload failed:', error);
+    }
+  }
+
+  async executeAutoReloadScripts() {
+    // Look for files that should auto-execute on reload
+    const autoReloadFiles = this._fileSystem.fileTree.filter(file => 
+      file.name.includes('auto-reload') || file.name.includes('hot-reload')
+    );
+    
+    for (const file of autoReloadFiles) {
+      try {
+        const content = await this._fileSystem.readFile(file.path);
+        await this._runtimeExecutor.executeCode(content);
+      } catch (error) {
+        console.log(`Auto-reload skipped for ${file.name}`);
+      }
     }
   }
 
   async createNewFile() {
-    const fileName = `new-file-${Date.now()}.js`;
+    const fileName = `script-${Date.now()}.js`;
     const defaultContent = `// New JavaScript file
 // Write your code here and execute it!
 
 console.log("Hello from ${fileName}!");
 
-// Access the global app context
-if (global.app) {
-  console.log("IDE is ready!");
-  console.log("Available API:", Object.keys(global.IDE || {}));
+// Access Open-IDE API:
+if (global.openIDE) {
+  console.log("Open-IDE API ready!");
+  
+  // Example: Create another file
+  // global.openIDE.createFile('test.js', 'console.log("Created!");');
+  
+  // Example: Read file content
+  // const content = global.openIDE.readFile('${fileName}');
+  // console.log('File content:', content);
 }
 
-// Example: Extend the IDE
-if (global.IDE) {
-  global.IDE.ui.showMessage("File created successfully!");
-}
+// Your code here...
 `;
     
     await this._fileSystem.createFile(fileName, defaultContent);
     await this._editorManager.openFile(fileName);
   }
+
+  // Hidden advanced features (discoverable)
+  /*
+  async loadHiddenExtensions() {
+    try {
+      const extensionFiles = this._fileSystem.fileTree.filter(file => 
+        file.name.includes('extension') || file.name.includes('plugin')
+      );
+      
+      for (const file of extensionFiles) {
+        const content = await this._fileSystem.readFile(file.path);
+        await this._runtimeExecutor.executeCode(content);
+      }
+    } catch (error) {
+      // Extensions not found or failed to load
+    }
+  }
+
+  async openSettings() {
+    // Settings panel functionality
+    console.log("Settings panel - implement custom settings here");
+  }
+
+  async executeTerminalCommand() {
+    // Terminal command execution
+    console.log("Terminal command execution - implement CLI features here");
+  }
+  */
 }
 
 module.exports = { MainViewModel };

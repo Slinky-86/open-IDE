@@ -4,33 +4,26 @@ let viewModel;
 
 function navigatingTo(args) {
   const page = args.object;
-  console.log('Page navigating to...');
   
   try {
     if (!viewModel) {
-      console.log('Creating view model...');
       viewModel = new MainViewModel();
-      
-      // Set UI reference for runtime modifications
       viewModel.setUIReference({ page: page });
     }
     
     page.bindingContext = viewModel;
-    console.log('Page loaded successfully');
   } catch (error) {
     console.error('Error in navigatingTo:', error);
   }
 }
 
 function onRefresh(args) {
-  console.log('Refresh tapped');
   if (viewModel) {
-    viewModel.refreshApp();
+    viewModel.hotReload();
   }
 }
 
 function onNewFile(args) {
-  console.log('New file tapped');
   if (viewModel) {
     viewModel.createNewFile();
   }
@@ -38,7 +31,6 @@ function onNewFile(args) {
 
 function onFileSelect(args) {
   const file = args.object.bindingContext;
-  console.log('File selected:', file);
   if (file && file.type === 'file' && viewModel) {
     viewModel.editorManager.openFile(file.path);
   }
@@ -46,7 +38,6 @@ function onFileSelect(args) {
 
 function onTabSelect(args) {
   const tab = args.object.bindingContext;
-  console.log('Tab selected:', tab);
   if (tab && viewModel) {
     viewModel.editorManager.setActiveTab(tab.id);
   }
@@ -54,7 +45,6 @@ function onTabSelect(args) {
 
 function onTabClose(args) {
   const tab = args.object.bindingContext;
-  console.log('Tab close:', tab);
   if (tab && viewModel) {
     viewModel.editorManager.closeTab(tab.id);
   }
@@ -69,18 +59,31 @@ function onEditorTextChange(args) {
 }
 
 function onExecute(args) {
-  console.log('Execute tapped');
   if (viewModel) {
-    viewModel.executeCurrentFile();
+    viewModel.executeCurrentCode();
   }
 }
 
 function onClearConsole(args) {
-  console.log('Clear console tapped');
   if (viewModel) {
     viewModel.runtimeExecutor.clearHistory();
   }
 }
+
+// Hidden advanced features (discoverable)
+/*
+function onSettings(args) {
+  if (viewModel) {
+    viewModel.openSettings();
+  }
+}
+
+function onExecuteCommand(args) {
+  if (viewModel) {
+    viewModel.executeTerminalCommand();
+  }
+}
+*/
 
 exports.navigatingTo = navigatingTo;
 exports.onRefresh = onRefresh;
@@ -91,3 +94,5 @@ exports.onTabClose = onTabClose;
 exports.onEditorTextChange = onEditorTextChange;
 exports.onExecute = onExecute;
 exports.onClearConsole = onClearConsole;
+// exports.onSettings = onSettings;
+// exports.onExecuteCommand = onExecuteCommand;

@@ -6,9 +6,14 @@ class EditorManager extends Observable {
     this._tabs = [];
     this._activeTabId = null;
     this._fileSystem = fileSystem;
-    this._customCommands = new Map();
     
-    // Initialize properties
+    // Basic syntax highlighting patterns (discoverable enhancement)
+    this._syntaxPatterns = {
+      // keywords: /\b(function|const|let|var|if|else|for|while|return|class|import|export)\b/g,
+      // strings: /"([^"\\]|\\.)*"|'([^'\\]|\\.)*'/g,
+      // comments: /\/\/.*$/gm
+    };
+    
     this.set('tabs', this._tabs);
     this.set('activeTab', null);
   }
@@ -21,22 +26,45 @@ class EditorManager extends Observable {
     return this._tabs.find(tab => tab.id === this._activeTabId) || null;
   }
 
-  addCommand(name, handler) {
-    this._customCommands.set(name, handler);
-    console.log(`✅ Added custom command: ${name}`);
-  }
-
-  executeCommand(name, ...args) {
-    const command = this._customCommands.get(name);
-    if (command) {
-      return command(...args);
+  // Basic auto-indentation (can be enhanced)
+  applyAutoIndent(text, cursorPosition) {
+    // Simple auto-indent logic
+    const lines = text.split('\n');
+    const currentLineIndex = text.substring(0, cursorPosition).split('\n').length - 1;
+    const currentLine = lines[currentLineIndex];
+    
+    // Basic indentation rules
+    if (currentLine.trim().endsWith('{') || currentLine.trim().endsWith('(')) {
+      return '  '; // Add 2 spaces for indentation
     }
-    throw new Error(`Command '${name}' not found`);
+    
+    return '';
   }
 
-  getCommands() {
-    return Array.from(this._customCommands.keys());
+  // Hidden advanced syntax highlighting (discoverable)
+  /*
+  applySyntaxHighlighting(text) {
+    let highlightedText = text;
+    
+    // Apply syntax highlighting patterns
+    for (const [type, pattern] of Object.entries(this._syntaxPatterns)) {
+      highlightedText = highlightedText.replace(pattern, (match) => {
+        return `<span class="syntax-${type}">${match}</span>`;
+      });
+    }
+    
+    return highlightedText;
   }
+
+  addSyntaxPattern(name, pattern) {
+    this._syntaxPatterns[name] = pattern;
+  }
+
+  enableAdvancedFeatures() {
+    // Code folding, bracket matching, etc.
+    console.log("Advanced editor features enabled!");
+  }
+  */
 
   async openFile(path) {
     const existingTab = this._tabs.find(tab => tab.path === path);
@@ -66,7 +94,6 @@ class EditorManager extends Observable {
       this.set('tabs', this._tabs);
       this.set('activeTab', newTab);
       
-      console.log(`📄 Opened file: ${fileName}`);
     } catch (error) {
       console.error('Failed to open file:', error);
     }
@@ -119,7 +146,6 @@ class EditorManager extends Observable {
         await this._fileSystem.writeFile(tab.path, tab.content);
         tab.isDirty = false;
         this.set('tabs', this._tabs);
-        console.log(`💾 Saved: ${tab.name}`);
       } catch (error) {
         console.error('Failed to save file:', error);
       }
