@@ -4,4 +4,5 @@
     <color name="ns_primaryDark">#252526</color>
     <color name="ns_accent">#007acc</color>
     <color name="ns_blue">#007acc</color>
+    <color name="launch_screen_background">#1e1e1e</color>
 </resources>
