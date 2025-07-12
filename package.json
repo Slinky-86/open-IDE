@@ -26,6 +26,7 @@
     "@nativescript/core": "~8.8.0"
   },
   "devDependencies": {
+    "@nativescript/preview-cli": "^1.0.14",
     "@nativescript/types": "~8.5.0",
     "@nativescript/webpack": "~5.0.0",
     "typescript": "~5.4.0"
