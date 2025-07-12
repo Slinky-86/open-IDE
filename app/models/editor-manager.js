@@ -70,7 +70,7 @@ class EditorManager extends Observable {
     this._syntaxPatterns = {
       ...this._syntaxPatterns,
       functions: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\(/g,
-      operators: /[+\-*/%=<>!&|^~?:]/g,
+      operators: /[+\-*\/%=<>!&|^~?:]/g,
       brackets: /[{}[\]()]/g,
       properties: /\.([a-zA-Z_$][a-zA-Z0-9_$]*)/g,
       globals: /\b(global|window|document|console|require|module|exports)\b/g,
