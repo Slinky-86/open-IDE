@@ -217,7 +217,32 @@
   font-weight: bold;
   color: #007acc;
   text-align: center;
-  margin-top: 50;
+  margin-bottom: 8;
+}
+
+.feature-subtitle {
+  font-size: 14;
+  color: #858585;
+  text-align: center;
+  margin-bottom: 20;
+}
+
+.empty-state {
+  font-size: 12;
+  color: #858585;
+  text-align: center;
+  padding: 20;
+  font-style: italic;
+}
+
+.plugin-manager, .extension-manager {
+  padding: 16;
+}
+
+.plugin-list, .extension-list {
+  background-color: #252526;
+  border-radius: 4;
+  margin-top: 16;
 }
 
 .terminal-header {
@@ -231,10 +256,6 @@
   font-size: 14;
   font-weight: bold;
   color: #cccccc;
-}
-
-.terminal-body {
-  background-color: #181818;
 }
 
 .command-input {
@@ -253,10 +274,30 @@
   padding: 8;
 }
 
+.terminal-entry {
+  margin-bottom: 8;
+  padding: 4 0;
+}
+
+.terminal-command {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 12;
+  color: #569cd6;
+  font-weight: bold;
+  margin-bottom: 2;
+}
+
 .terminal-text {
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 12;
   color: #d4d4d4;
+  line-height: 1.4;
+}
+
+.terminal-error {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 12;
+  color: #f85149;
   line-height: 1.4;
 }
 
@@ -272,6 +313,10 @@
 .syntax-comments {
   color: #6a9955;
   font-style: italic;
+}
+
+.syntax-numbers {
+  color: #b5cea8;
 }
 */
 

@@ -7,11 +7,12 @@ class EditorManager extends Observable {
     this._activeTabId = null;
     this._fileSystem = fileSystem;
     
-    // Basic syntax highlighting patterns (discoverable enhancement)
+    // Basic syntax highlighting patterns
     this._syntaxPatterns = {
-      // keywords: /\b(function|const|let|var|if|else|for|while|return|class|import|export)\b/g,
-      // strings: /"([^"\\]|\\.)*"|'([^'\\]|\\.)*'/g,
-      // comments: /\/\/.*$/gm
+      keywords: /\b(function|const|let|var|if|else|for|while|return|class|import|export|async|await)\b/g,
+      strings: /"([^"\\]|\\.)*"|'([^'\\]|\\.)*'|`([^`\\]|\\.)*`/g,
+      comments: /\/\/.*$/gm,
+      numbers: /\b\d+(\.\d+)?\b/g
     };
     
     this.set('tabs', this._tabs);
@@ -26,9 +27,8 @@ class EditorManager extends Observable {
     return this._tabs.find(tab => tab.id === this._activeTabId) || null;
   }
 
-  // Basic auto-indentation (can be enhanced)
+  // Basic auto-indentation
   applyAutoIndent(text, cursorPosition) {
-    // Simple auto-indent logic
     const lines = text.split('\n');
     const currentLineIndex = text.substring(0, cursorPosition).split('\n').length - 1;
     const currentLine = lines[currentLineIndex];
@@ -38,31 +38,46 @@ class EditorManager extends Observable {
       return '  '; // Add 2 spaces for indentation
     }
     
+    // Match previous line indentation
+    if (currentLineIndex > 0) {
+      const previousLine = lines[currentLineIndex - 1];
+      const match = previousLine.match(/^(\s*)/);
+      return match ? match[1] : '';
+    }
+    
     return '';
+  }
+
+  // Basic syntax highlighting (can be enhanced)
+  applySyntaxHighlighting(text) {
+    // This is a basic implementation
+    // In a real editor, you'd use a proper syntax highlighter
+    return text; // For now, return as-is
   }
 
   // Hidden advanced syntax highlighting (discoverable)
   /*
-  applySyntaxHighlighting(text) {
-    let highlightedText = text;
-    
-    // Apply syntax highlighting patterns
-    for (const [type, pattern] of Object.entries(this._syntaxPatterns)) {
-      highlightedText = highlightedText.replace(pattern, (match) => {
-        return `<span class="syntax-${type}">${match}</span>`;
-      });
-    }
-    
-    return highlightedText;
+  enableAdvancedSyntaxHighlighting() {
+    this._syntaxPatterns = {
+      ...this._syntaxPatterns,
+      functions: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\(/g,
+      operators: /[+\-*/%=<>!&|^~?:]/g,
+      brackets: /[{}[\]()]/g,
+      properties: /\.([a-zA-Z_$][a-zA-Z0-9_$]*)/g
+    };
+    console.log("🎨 Advanced syntax highlighting enabled!");
   }
 
-  addSyntaxPattern(name, pattern) {
-    this._syntaxPatterns[name] = pattern;
+  enableCodeFolding() {
+    console.log("📁 Code folding enabled!");
   }
 
-  enableAdvancedFeatures() {
-    // Code folding, bracket matching, etc.
-    console.log("Advanced editor features enabled!");
+  enableBracketMatching() {
+    console.log("🔗 Bracket matching enabled!");
+  }
+
+  enableAutoComplete() {
+    console.log("💡 Auto-complete enabled!");
   }
   */
 

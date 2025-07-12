@@ -2,6 +2,7 @@ const { Observable } = require('@nativescript/core');
 const { FileSystemManager } = require('../models/file-system.js');
 const { EditorManager } = require('../models/editor-manager.js');
 const { RuntimeExecutor } = require('../models/runtime-executor.js');
+// const { TerminalManager } = require('../models/terminal-manager.js');
 
 class MainViewModel extends Observable {
   constructor() {
@@ -10,6 +11,7 @@ class MainViewModel extends Observable {
     this._fileSystem = new FileSystemManager();
     this._editorManager = new EditorManager(this._fileSystem);
     this._runtimeExecutor = new RuntimeExecutor(this._fileSystem);
+    // this._terminalManager = new TerminalManager();
     
     // Welcome text for clean start
     this._welcomeText = `// Welcome to Open-IDE! 🚀
@@ -41,6 +43,7 @@ if (global.openIDE) {
     this.set('fileSystem', this._fileSystem);
     this.set('editorManager', this._editorManager);
     this.set('runtimeExecutor', this._runtimeExecutor);
+    // this.set('terminalManager', this._terminalManager);
     this.set('welcomeText', this._welcomeText);
     
     this.initializeApp();
@@ -57,6 +60,10 @@ if (global.openIDE) {
   get runtimeExecutor() {
     return this._runtimeExecutor;
   }
+
+  // get terminalManager() {
+  //   return this._terminalManager;
+  // }
 
   get welcomeText() {
     return this._welcomeText;
@@ -172,11 +179,6 @@ if (global.openIDE) {
   async openSettings() {
     // Settings panel functionality
     console.log("Settings panel - implement custom settings here");
-  }
-
-  async executeTerminalCommand() {
-    // Terminal command execution
-    console.log("Terminal command execution - implement CLI features here");
   }
   */
 }

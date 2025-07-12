@@ -92,25 +92,6 @@ class RuntimeExecutor extends Observable {
         }
       },
       
-      // Terminal commands
-      terminal: {
-        execute: async (command) => {
-          console.log(`🖥️ Executing: ${command}`);
-          // Implement terminal command execution
-          if (command.startsWith('ns build')) {
-            console.log('🔨 Building NativeScript app...');
-            // Trigger build process
-          }
-        },
-        
-        addCommand: (name, handler) => {
-          if (!global.openIDE._commands) {
-            global.openIDE._commands = new Map();
-          }
-          global.openIDE._commands.set(name, handler);
-        }
-      },
-      
       // UI manipulation
       ui: {
         addTab: (title, content) => {
@@ -126,10 +107,62 @@ class RuntimeExecutor extends Observable {
           console.log(`📋 Adding menu item: ${text}`);
           // Add menu item functionality
         }
+      },
+      
+      // Extension system
+      extensions: {
+        load: (extensionCode) => {
+          try {
+            const func = new Function('openIDE', extensionCode);
+            func(global.openIDE);
+            console.log('🔧 Extension loaded successfully');
+          } catch (error) {
+            console.error('❌ Extension failed to load:', error);
+          }
+        }
       }
     };
     
     console.log('🔧 Advanced API features unlocked!');
+  }
+
+  // Common plugins (commented out for discovery)
+  loadCommonPlugins() {
+    // File Tree Plugin
+    const fileTreePlugin = {
+      name: 'File Tree Enhanced',
+      init: (api) => {
+        api.fileTree = {
+          refresh: () => console.log('🌳 File tree refreshed'),
+          search: (query) => console.log(`🔍 Searching for: ${query}`),
+          filter: (type) => console.log(`📁 Filtering by: ${type}`)
+        };
+      }
+    };
+    
+    // Code Formatter Plugin
+    const formatterPlugin = {
+      name: 'Code Formatter',
+      init: (api) => {
+        api.format = {
+          javascript: (code) => {
+            // Basic JS formatting
+            return code.replace(/;/g, ';\n').replace(/{/g, '{\n').replace(/}/g, '\n}');
+          },
+          json: (code) => {
+            try {
+              return JSON.stringify(JSON.parse(code), null, 2);
+            } catch (e) {
+              return code;
+            }
+          }
+        };
+      }
+    };
+    
+    // Register plugins
+    global.openIDE._advanced.plugins.register('fileTree', fileTreePlugin);
+    global.openIDE._advanced.plugins.register('formatter', formatterPlugin);
   }
   */
 

@@ -72,15 +72,9 @@ function onClearConsole(args) {
 
 // Hidden advanced features (discoverable)
 /*
-function onSettings(args) {
-  if (viewModel) {
-    viewModel.openSettings();
-  }
-}
-
 function onExecuteCommand(args) {
-  if (viewModel) {
-    viewModel.executeTerminalCommand();
+  if (viewModel && viewModel.terminalManager) {
+    viewModel.terminalManager.executeCommand();
   }
 }
 */
@@ -94,5 +88,4 @@ exports.onTabClose = onTabClose;
 exports.onEditorTextChange = onEditorTextChange;
 exports.onExecute = onExecute;
 exports.onClearConsole = onClearConsole;
-// exports.onSettings = onSettings;
 // exports.onExecuteCommand = onExecuteCommand;

@@ -2,7 +2,6 @@
   <ActionBar title="Open-IDE" class="action-bar">
     <ActionItem text="⟲" tap="onRefresh" ios.position="right" android.position="actionBar" />
     <ActionItem text="+" tap="onNewFile" ios.position="right" android.position="actionBar" />
-    <!-- <ActionItem text="⚙️" tap="onSettings" ios.position="right" android.position="actionBar" /> -->
   </ActionBar>
   
   <GridLayout rows="*, auto" class="main-container">
@@ -62,28 +61,58 @@
       <!-- 
       <TabViewItem title="🔌 Plugins" class="tab-item">
         <GridLayout class="plugins-content">
-          <Label text="Plugin System - Extend Open-IDE functionality" class="feature-title" />
+          <StackLayout class="plugin-manager">
+            <Label text="Plugin System" class="feature-title" />
+            <Label text="Extend Open-IDE functionality" class="feature-subtitle" />
+            <ScrollView class="plugin-list">
+              <StackLayout>
+                <Label text="No plugins loaded. Create plugins to extend the IDE." class="empty-state" />
+              </StackLayout>
+            </ScrollView>
+          </StackLayout>
         </GridLayout>
       </TabViewItem>
       
       <TabViewItem title="⚡ Extensions" class="tab-item">
         <GridLayout class="extensions-content">
-          <Label text="Extensions Manager - Add custom features" class="feature-title" />
+          <StackLayout class="extension-manager">
+            <Label text="Extensions Manager" class="feature-title" />
+            <Label text="Add custom features and tools" class="feature-subtitle" />
+            <ScrollView class="extension-list">
+              <StackLayout>
+                <Label text="No extensions installed. Build your own extensions." class="empty-state" />
+              </StackLayout>
+            </ScrollView>
+          </StackLayout>
         </GridLayout>
       </TabViewItem>
       
       <TabViewItem title="🖥️ Terminal" class="tab-item">
-        <GridLayout rows="auto, *" class="terminal-content">
+        <GridLayout rows="auto, auto, *" class="terminal-content">
           <GridLayout row="0" columns="*, auto" class="terminal-header">
             <Label col="0" text="Terminal - Command Line Interface" class="terminal-title" />
             <Button col="1" text="▶️" tap="onExecuteCommand" class="execute-btn" />
           </GridLayout>
-          <GridLayout row="1" rows="auto, *" class="terminal-body">
-            <TextField row="0" hint="Enter command..." class="command-input" />
-            <ScrollView row="1" class="terminal-output">
-              <Label text="Terminal ready. Type commands to execute." class="terminal-text" />
-            </ScrollView>
-          </GridLayout>
+          <TextField row="1" hint="Enter command (e.g., ns build android)..." 
+                     text="{{ terminalManager.currentCommand }}" 
+                     class="command-input" />
+          <ScrollView row="2" class="terminal-output">
+            <StackLayout class="terminal-content">
+              <Label text="Terminal ready. Type commands to execute builds and operations." 
+                     class="terminal-text" 
+                     visibility="{{ terminalManager.history.length === 0 ? 'visible' : 'collapsed' }}" />
+              <Repeater items="{{ terminalManager.history }}">
+                <Repeater.itemTemplate>
+                  <StackLayout class="terminal-entry">
+                    <Label text="$ {{ command }}" class="terminal-command" />
+                    <Label text="{{ output }}" class="terminal-text" textWrap="true" />
+                    <Label text="{{ error }}" class="terminal-error" textWrap="true" 
+                           visibility="{{ error ? 'visible' : 'collapsed' }}" />
+                  </StackLayout>
+                </Repeater.itemTemplate>
+              </Repeater>
+            </StackLayout>
+          </ScrollView>
         </GridLayout>
       </TabViewItem>
       -->
