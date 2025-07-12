@@ -13,38 +13,11 @@ class MainViewModel extends Observable {
     this._runtimeExecutor = new RuntimeExecutor(this._fileSystem);
     // this._terminalManager = new TerminalManager();
     
-    // Welcome text for clean start
-    this._welcomeText = `// Welcome to Open-IDE! 🚀
-// A mobile development environment with hot reload
-
-// Getting Started:
-// 1. Create files using the + button
-// 2. Write your code here
-// 3. Use the ▶️ button to execute
-// 4. Use ⟲ to hot reload your changes
-
-// Hot Reload API:
-// Modify this code and hit refresh to see changes!
-
-console.log("Open-IDE is ready!");
-
-// Access the runtime API:
-if (global.openIDE) {
-  console.log("Runtime API available!");
-  console.log("Available methods:", Object.keys(global.openIDE));
-}
-
-// Example: Create a new file programmatically
-// global.openIDE.createFile('my-script.js', 'console.log("Hello!");');
-
-// Start building your mobile development environment!`;
-    
     // Initialize properties
     this.set('fileSystem', this._fileSystem);
     this.set('editorManager', this._editorManager);
     this.set('runtimeExecutor', this._runtimeExecutor);
     // this.set('terminalManager', this._terminalManager);
-    this.set('welcomeText', this._welcomeText);
     
     this.initializeApp();
   }
@@ -65,17 +38,13 @@ if (global.openIDE) {
   //   return this._terminalManager;
   // }
 
-  get welcomeText() {
-    return this._welcomeText;
-  }
-
   async initializeApp() {
     try {
-      // Set up basic runtime API
+      // Set up runtime API for hot reload
       this._runtimeExecutor.exposeBasicAPI();
       
-      // Load any existing extensions (hidden feature)
-      // this.loadHiddenExtensions();
+      // Load any existing hot-reload scripts (hidden feature)
+      // this.loadHotReloadExtensions();
       
     } catch (error) {
       console.error('Failed to initialize app:', error);
@@ -111,6 +80,10 @@ if (global.openIDE) {
       // Re-execute any auto-reload scripts
       await this.executeAutoReloadScripts();
       
+      // Trigger UI refresh
+      this.notifyPropertyChange('fileSystem', this._fileSystem);
+      this.notifyPropertyChange('editorManager', this._editorManager);
+      
       console.log('✅ Hot reload complete!');
     } catch (error) {
       console.error('❌ Hot reload failed:', error);
@@ -120,22 +93,25 @@ if (global.openIDE) {
   async executeAutoReloadScripts() {
     // Look for files that should auto-execute on reload
     const autoReloadFiles = this._fileSystem.fileTree.filter(file => 
-      file.name.includes('auto-reload') || file.name.includes('hot-reload')
+      file.name.includes('auto-reload') || 
+      file.name.includes('hot-reload') ||
+      file.name.includes('extension')
     );
     
     for (const file of autoReloadFiles) {
       try {
         const content = await this._fileSystem.readFile(file.path);
         await this._runtimeExecutor.executeCode(content);
+        console.log(`🔄 Auto-reloaded: ${file.name}`);
       } catch (error) {
-        console.log(`Auto-reload skipped for ${file.name}`);
+        console.log(`⚠️ Auto-reload skipped for ${file.name}: ${error.message}`);
       }
     }
   }
 
   async createNewFile() {
     const fileName = `script-${Date.now()}.js`;
-    const defaultContent = `// New JavaScript file
+    const defaultContent = `// New JavaScript file - Hot reloadable!
 // Write your code here and execute it!
 
 console.log("Hello from ${fileName}!");
@@ -150,35 +126,47 @@ if (global.openIDE) {
   // Example: Read file content
   // const content = global.openIDE.readFile('${fileName}');
   // console.log('File content:', content);
+  
+  // Example: Hot reload trigger
+  // global.openIDE.hotReload();
 }
 
-// Your code here...
+// Your hot-reloadable code here...
 `;
     
     await this._fileSystem.createFile(fileName, defaultContent);
     await this._editorManager.openFile(fileName);
   }
 
-  // Hidden advanced features (discoverable)
+  // Hidden advanced features (discoverable by uncommenting)
   /*
-  async loadHiddenExtensions() {
+  async loadHotReloadExtensions() {
     try {
       const extensionFiles = this._fileSystem.fileTree.filter(file => 
-        file.name.includes('extension') || file.name.includes('plugin')
+        file.name.includes('extension') || 
+        file.name.includes('plugin') ||
+        file.name.includes('hot-reload')
       );
       
       for (const file of extensionFiles) {
         const content = await this._fileSystem.readFile(file.path);
         await this._runtimeExecutor.executeCode(content);
+        console.log(`🔌 Loaded extension: ${file.name}`);
       }
     } catch (error) {
-      // Extensions not found or failed to load
+      console.log('No extensions found or failed to load');
     }
   }
 
-  async openSettings() {
-    // Settings panel functionality
-    console.log("Settings panel - implement custom settings here");
+  async enableAdvancedFeatures() {
+    // Enable plugin system
+    this._runtimeExecutor.exposeAdvancedAPI();
+    
+    // Enable terminal
+    this._terminalManager = new (require('../models/terminal-manager.js')).TerminalManager();
+    this.set('terminalManager', this._terminalManager);
+    
+    console.log('🚀 Advanced features enabled!');
   }
   */
 }

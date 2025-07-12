@@ -48,7 +48,9 @@ class RuntimeExecutor extends Observable {
       // Hot reload trigger
       hotReload: () => {
         console.log("🔥 Hot reload triggered via API");
-        // Trigger hot reload functionality
+        if (global.openIDE._viewModel) {
+          global.openIDE._viewModel.hotReload();
+        }
       },
       
       // Basic utilities
@@ -58,37 +60,50 @@ class RuntimeExecutor extends Observable {
       
       // Hidden reference for advanced features
       _ui: null,
+      _viewModel: null,
       _advanced: null
     };
     
     console.log('🚀 Open-IDE Runtime API ready!');
     console.log('📖 Use global.openIDE to access functionality');
+    console.log('🔥 Try: global.openIDE.hotReload() for instant updates');
   }
 
-  // Hidden advanced API (discoverable)
+  // Hidden advanced API (discoverable by uncommenting)
   /*
   exposeAdvancedAPI() {
     global.openIDE._advanced = {
       // Plugin system
       plugins: {
+        _registry: new Map(),
+        
         register: (name, plugin) => {
-          if (!global.openIDE._plugins) {
-            global.openIDE._plugins = new Map();
-          }
-          global.openIDE._plugins.set(name, plugin);
+          global.openIDE._advanced.plugins._registry.set(name, plugin);
           console.log(`🔌 Plugin '${name}' registered`);
           
           if (plugin.init && typeof plugin.init === 'function') {
             plugin.init(global.openIDE);
           }
+          
+          if (plugin.hotReload && typeof plugin.hotReload === 'function') {
+            console.log(`🔥 Plugin '${name}' supports hot reload`);
+          }
         },
         
         get: (name) => {
-          return global.openIDE._plugins ? global.openIDE._plugins.get(name) : null;
+          return global.openIDE._advanced.plugins._registry.get(name);
         },
         
         list: () => {
-          return global.openIDE._plugins ? Array.from(global.openIDE._plugins.keys()) : [];
+          return Array.from(global.openIDE._advanced.plugins._registry.keys());
+        },
+        
+        hotReload: (name) => {
+          const plugin = global.openIDE._advanced.plugins._registry.get(name);
+          if (plugin && plugin.hotReload) {
+            plugin.hotReload(global.openIDE);
+            console.log(`🔥 Hot reloaded plugin: ${name}`);
+          }
         }
       },
       
@@ -106,6 +121,11 @@ class RuntimeExecutor extends Observable {
         addMenuItem: (text, callback) => {
           console.log(`📋 Adding menu item: ${text}`);
           // Add menu item functionality
+        },
+        
+        modifyEditor: (modifications) => {
+          console.log('🎨 Modifying editor:', modifications);
+          // Apply editor modifications
         }
       },
       
@@ -119,35 +139,83 @@ class RuntimeExecutor extends Observable {
           } catch (error) {
             console.error('❌ Extension failed to load:', error);
           }
+        },
+        
+        loadFromFile: async (filePath) => {
+          try {
+            const code = await global.openIDE.readFile(filePath);
+            global.openIDE._advanced.extensions.load(code);
+            console.log(`🔧 Extension loaded from: ${filePath}`);
+          } catch (error) {
+            console.error(`❌ Failed to load extension from ${filePath}:`, error);
+          }
+        }
+      },
+      
+      // Hot reload system
+      hotReload: {
+        addWatcher: (pattern, callback) => {
+          console.log(`👁️ Watching files matching: ${pattern}`);
+          // Add file watcher
+        },
+        
+        triggerReload: (reason = 'manual') => {
+          console.log(`🔥 Hot reload triggered: ${reason}`);
+          global.openIDE.hotReload();
         }
       }
     };
     
     console.log('🔧 Advanced API features unlocked!');
+    console.log('🔌 Plugin system available');
+    console.log('🎨 UI modification tools ready');
+    console.log('🔧 Extension loader active');
   }
 
   // Common plugins (commented out for discovery)
   loadCommonPlugins() {
-    // File Tree Plugin
+    // File Tree Enhanced Plugin
     const fileTreePlugin = {
       name: 'File Tree Enhanced',
+      version: '1.0.0',
       init: (api) => {
         api.fileTree = {
-          refresh: () => console.log('🌳 File tree refreshed'),
-          search: (query) => console.log(`🔍 Searching for: ${query}`),
-          filter: (type) => console.log(`📁 Filtering by: ${type}`)
+          refresh: () => {
+            console.log('🌳 File tree refreshed');
+            api._viewModel.fileSystem.loadFileTree();
+          },
+          search: (query) => {
+            console.log(`🔍 Searching for: ${query}`);
+            const results = api.listFiles().filter(file => 
+              file.name.toLowerCase().includes(query.toLowerCase())
+            );
+            console.log(`Found ${results.length} files`);
+            return results;
+          },
+          filter: (type) => {
+            console.log(`📁 Filtering by: ${type}`);
+            return api.listFiles().filter(file => file.type === type);
+          }
         };
+      },
+      hotReload: (api) => {
+        console.log('🔥 File Tree plugin hot reloaded');
       }
     };
     
     // Code Formatter Plugin
     const formatterPlugin = {
       name: 'Code Formatter',
+      version: '1.0.0',
       init: (api) => {
         api.format = {
           javascript: (code) => {
             // Basic JS formatting
-            return code.replace(/;/g, ';\n').replace(/{/g, '{\n').replace(/}/g, '\n}');
+            return code
+              .replace(/;/g, ';\n')
+              .replace(/{/g, '{\n')
+              .replace(/}/g, '\n}')
+              .replace(/,/g, ',\n');
           },
           json: (code) => {
             try {
@@ -155,14 +223,47 @@ class RuntimeExecutor extends Observable {
             } catch (e) {
               return code;
             }
+          },
+          minify: (code) => {
+            return code.replace(/\s+/g, ' ').trim();
           }
         };
+      },
+      hotReload: (api) => {
+        console.log('🔥 Code Formatter plugin hot reloaded');
+      }
+    };
+    
+    // Live Preview Plugin
+    const livePreviewPlugin = {
+      name: 'Live Preview',
+      version: '1.0.0',
+      init: (api) => {
+        api.preview = {
+          start: () => {
+            console.log('👁️ Live preview started');
+          },
+          stop: () => {
+            console.log('⏹️ Live preview stopped');
+          },
+          refresh: () => {
+            console.log('🔄 Live preview refreshed');
+          }
+        };
+      },
+      hotReload: (api) => {
+        console.log('🔥 Live Preview plugin hot reloaded');
       }
     };
     
     // Register plugins
-    global.openIDE._advanced.plugins.register('fileTree', fileTreePlugin);
-    global.openIDE._advanced.plugins.register('formatter', formatterPlugin);
+    if (global.openIDE._advanced) {
+      global.openIDE._advanced.plugins.register('fileTree', fileTreePlugin);
+      global.openIDE._advanced.plugins.register('formatter', formatterPlugin);
+      global.openIDE._advanced.plugins.register('livePreview', livePreviewPlugin);
+      
+      console.log('🔌 Common plugins loaded and ready for hot reload!');
+    }
   }
   */
 
@@ -194,7 +295,8 @@ class RuntimeExecutor extends Observable {
         clearTimeout: clearTimeout,
         clearInterval: clearInterval,
         global: global,
-        openIDE: global.openIDE
+        openIDE: global.openIDE,
+        require: require
       };
 
       const func = new Function('context', `
@@ -217,6 +319,7 @@ class RuntimeExecutor extends Observable {
 
     this._history.push(result);
     this.set('history', this._history);
+    this.notifyPropertyChange('history', this._history);
     
     return result;
   }
@@ -224,6 +327,7 @@ class RuntimeExecutor extends Observable {
   clearHistory() {
     this._history = [];
     this.set('history', this._history);
+    this.notifyPropertyChange('history', this._history);
   }
 }
 

@@ -1,4 +1,4 @@
-/* Open-IDE - Clean Mobile Development Environment */
+/* Open-IDE - Pure JavaScript Hot-Reloadable Mobile Development Environment */
 
 .page {
   background-color: #1e1e1e;
@@ -205,44 +205,11 @@
   line-height: 1.4;
 }
 
-/* Hidden Advanced Features Styles (Discoverable) */
+/* Hidden Advanced Features Styles (Discoverable by uncommenting) */
 /*
-.plugins-content, .extensions-content, .terminal-content {
+.terminal-content {
   background-color: #1e1e1e;
   padding: 16;
-}
-
-.feature-title {
-  font-size: 18;
-  font-weight: bold;
-  color: #007acc;
-  text-align: center;
-  margin-bottom: 8;
-}
-
-.feature-subtitle {
-  font-size: 14;
-  color: #858585;
-  text-align: center;
-  margin-bottom: 20;
-}
-
-.empty-state {
-  font-size: 12;
-  color: #858585;
-  text-align: center;
-  padding: 20;
-  font-style: italic;
-}
-
-.plugin-manager, .extension-manager {
-  padding: 16;
-}
-
-.plugin-list, .extension-list {
-  background-color: #252526;
-  border-radius: 4;
-  margin-top: 16;
 }
 
 .terminal-header {
@@ -301,6 +268,44 @@
   line-height: 1.4;
 }
 
+.plugins-content, .extensions-content {
+  background-color: #1e1e1e;
+  padding: 16;
+}
+
+.feature-title {
+  font-size: 18;
+  font-weight: bold;
+  color: #007acc;
+  text-align: center;
+  margin-bottom: 8;
+}
+
+.feature-subtitle {
+  font-size: 14;
+  color: #858585;
+  text-align: center;
+  margin-bottom: 20;
+}
+
+.empty-state {
+  font-size: 12;
+  color: #858585;
+  text-align: center;
+  padding: 20;
+  font-style: italic;
+}
+
+.plugin-manager, .extension-manager {
+  padding: 16;
+}
+
+.plugin-list, .extension-list {
+  background-color: #252526;
+  border-radius: 4;
+  margin-top: 16;
+}
+
 .syntax-keywords {
   color: #569cd6;
   font-weight: bold;
@@ -318,6 +323,22 @@
 .syntax-numbers {
   color: #b5cea8;
 }
+
+.syntax-functions {
+  color: #dcdcaa;
+}
+
+.syntax-operators {
+  color: #d4d4d4;
+}
+
+.syntax-brackets {
+  color: #ffd700;
+}
+
+.syntax-properties {
+  color: #9cdcfe;
+}
 */
 
 /* Responsive Design */
@@ -334,4 +355,15 @@
     font-size: 13;
     padding: 12;
   }
+}
+
+/* Hot Reload Indicator */
+.hot-reload-active {
+  border-left-width: 3;
+  border-left-color: #00ff00;
+}
+
+.hot-reload-pending {
+  border-left-width: 3;
+  border-left-color: #ffff00;
 }

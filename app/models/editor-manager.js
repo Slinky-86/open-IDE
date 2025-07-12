@@ -7,9 +7,9 @@ class EditorManager extends Observable {
     this._activeTabId = null;
     this._fileSystem = fileSystem;
     
-    // Basic syntax highlighting patterns
+    // Basic syntax highlighting patterns (hot-reloadable)
     this._syntaxPatterns = {
-      keywords: /\b(function|const|let|var|if|else|for|while|return|class|import|export|async|await)\b/g,
+      keywords: /\b(function|const|let|var|if|else|for|while|return|class|import|export|async|await|try|catch|finally)\b/g,
       strings: /"([^"\\]|\\.)*"|'([^'\\]|\\.)*'|`([^`\\]|\\.)*`/g,
       comments: /\/\/.*$/gm,
       numbers: /\b\d+(\.\d+)?\b/g
@@ -27,14 +27,14 @@ class EditorManager extends Observable {
     return this._tabs.find(tab => tab.id === this._activeTabId) || null;
   }
 
-  // Basic auto-indentation
+  // Basic auto-indentation (hot-reloadable)
   applyAutoIndent(text, cursorPosition) {
     const lines = text.split('\n');
     const currentLineIndex = text.substring(0, cursorPosition).split('\n').length - 1;
     const currentLine = lines[currentLineIndex];
     
     // Basic indentation rules
-    if (currentLine.trim().endsWith('{') || currentLine.trim().endsWith('(')) {
+    if (currentLine.trim().endsWith('{') || currentLine.trim().endsWith('(') || currentLine.trim().endsWith('[')) {
       return '  '; // Add 2 spaces for indentation
     }
     
@@ -48,14 +48,23 @@ class EditorManager extends Observable {
     return '';
   }
 
-  // Basic syntax highlighting (can be enhanced)
+  // Basic syntax highlighting (hot-reloadable)
   applySyntaxHighlighting(text) {
-    // This is a basic implementation
-    // In a real editor, you'd use a proper syntax highlighter
-    return text; // For now, return as-is
+    // This is a basic implementation that can be enhanced via hot reload
+    let highlighted = text;
+    
+    // Apply basic highlighting patterns
+    Object.keys(this._syntaxPatterns).forEach(type => {
+      const pattern = this._syntaxPatterns[type];
+      highlighted = highlighted.replace(pattern, (match) => {
+        return `[${type}]${match}[/${type}]`;
+      });
+    });
+    
+    return highlighted;
   }
 
-  // Hidden advanced syntax highlighting (discoverable)
+  // Hidden advanced syntax highlighting (discoverable by uncommenting)
   /*
   enableAdvancedSyntaxHighlighting() {
     this._syntaxPatterns = {
@@ -63,21 +72,40 @@ class EditorManager extends Observable {
       functions: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\(/g,
       operators: /[+\-*/%=<>!&|^~?:]/g,
       brackets: /[{}[\]()]/g,
-      properties: /\.([a-zA-Z_$][a-zA-Z0-9_$]*)/g
+      properties: /\.([a-zA-Z_$][a-zA-Z0-9_$]*)/g,
+      globals: /\b(global|window|document|console|require|module|exports)\b/g,
+      types: /\b(string|number|boolean|object|array|function|undefined|null)\b/g
     };
     console.log("🎨 Advanced syntax highlighting enabled!");
+    return this;
   }
 
   enableCodeFolding() {
+    this._codeFolding = true;
     console.log("📁 Code folding enabled!");
+    return this;
   }
 
   enableBracketMatching() {
+    this._bracketMatching = true;
     console.log("🔗 Bracket matching enabled!");
+    return this;
   }
 
   enableAutoComplete() {
+    this._autoComplete = {
+      keywords: ['function', 'const', 'let', 'var', 'if', 'else', 'for', 'while', 'return', 'class', 'import', 'export'],
+      globals: ['global', 'console', 'require', 'module', 'exports', 'setTimeout', 'setInterval'],
+      openIDE: ['createFile', 'readFile', 'writeFile', 'deleteFile', 'execute', 'hotReload']
+    };
     console.log("💡 Auto-complete enabled!");
+    return this;
+  }
+
+  enableLivePreview() {
+    this._livePreview = true;
+    console.log("👁️ Live preview enabled!");
+    return this;
   }
   */
 
@@ -108,6 +136,8 @@ class EditorManager extends Observable {
       
       this.set('tabs', this._tabs);
       this.set('activeTab', newTab);
+      this.notifyPropertyChange('tabs', this._tabs);
+      this.notifyPropertyChange('activeTab', newTab);
       
     } catch (error) {
       console.error('Failed to open file:', error);
@@ -137,12 +167,15 @@ class EditorManager extends Observable {
     }
 
     this.set('tabs', this._tabs);
+    this.notifyPropertyChange('tabs', this._tabs);
   }
 
   setActiveTab(tabId) {
     this._tabs.forEach(tab => tab.isActive = tab.id === tabId);
     this._activeTabId = tabId;
-    this.set('activeTab', this.activeTab);
+    const activeTab = this.activeTab;
+    this.set('activeTab', activeTab);
+    this.notifyPropertyChange('activeTab', activeTab);
   }
 
   updateTabContent(tabId, content) {
@@ -151,6 +184,7 @@ class EditorManager extends Observable {
       tab.content = content;
       tab.isDirty = true;
       this.set('tabs', this._tabs);
+      this.notifyPropertyChange('tabs', this._tabs);
     }
   }
 
@@ -161,6 +195,7 @@ class EditorManager extends Observable {
         await this._fileSystem.writeFile(tab.path, tab.content);
         tab.isDirty = false;
         this.set('tabs', this._tabs);
+        this.notifyPropertyChange('tabs', this._tabs);
       } catch (error) {
         console.error('Failed to save file:', error);
       }

@@ -1,6 +1,6 @@
 import { Application } from '@nativescript/core';
 
-// Open-IDE - Mobile Development Environment
-// Hot reload enabled - modify code and refresh to see changes
+// Open-IDE - Pure JavaScript Mobile Development Environment
+// Everything is hot-reloadable since it's all JavaScript!
 
 Application.run({ moduleName: 'views/main-page' });

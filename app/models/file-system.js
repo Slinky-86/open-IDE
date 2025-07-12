@@ -57,63 +57,80 @@ class FileSystemManager extends Observable {
 
 ## Welcome to Open-IDE!
 
-A mobile development environment with hot reload capabilities.
+A **pure JavaScript** mobile development environment with **full hot reload** capabilities.
 
-### Core Features Available:
+### 🔥 Hot Reload Feature
 
-#### 🔥 Hot Reload
-- Modify your code
-- Hit the refresh button (⟲)
-- See changes applied instantly
+The core feature that makes Open-IDE powerful:
 
-#### 📁 File Management
-- Create files with the + button
-- Edit code in the built-in editor
-- Files are automatically saved
+1. **Modify any JavaScript file** in the editor
+2. **Hit the refresh button (⟲)** in the top bar
+3. **See changes applied instantly** - no app restart needed!
 
-#### ▶️ Code Execution
-- Write JavaScript code
-- Execute with the ▶️ button
-- See output in the console
+### 📁 File Management
 
-#### 🔧 Runtime API
-Access the Open-IDE API in your code:
+- **Create files** with the + button
+- **Edit code** in the built-in editor with syntax highlighting
+- **Files auto-save** when you switch tabs or hot reload
+
+### ▶️ Code Execution
+
+- **Write JavaScript code** in any file
+- **Execute with ▶️** button to see output in console
+- **Access runtime API** for advanced functionality
+
+### 🔧 Runtime API
+
+Access the Open-IDE API in your code for live modifications:
 
 \`\`\`javascript
 // Check if API is available
 if (global.openIDE) {
-  console.log("API ready!");
+  console.log("Open-IDE API ready!");
   
-  // Create files programmatically
-  global.openIDE.createFile('test.js', 'console.log("Hello!");');
-  
-  // Read file contents
+  // File operations
+  global.openIDE.createFile('my-script.js', 'console.log("Hello!");');
   const content = global.openIDE.readFile('tutorial.md');
+  global.openIDE.writeFile('config.js', 'module.exports = { theme: "dark" };');
   
-  // Execute code
+  // Hot reload trigger
+  global.openIDE.hotReload();
+  
+  // Execute code dynamically
   global.openIDE.execute('console.log("Runtime execution!");');
 }
 \`\`\`
 
-### Getting Started:
-
-1. Create a new JavaScript file using the + button
-2. Write some code
-3. Execute it with ▶️
-4. Modify the code and use ⟲ to hot reload
-
-### Building Your Environment:
+### 🚀 Building Your Development Environment
 
 Use the runtime API to extend Open-IDE:
-- Add custom functionality
-- Create development tools
-- Build your own IDE features
 
-Start exploring and building! 🚀
+1. **Create extension files** that modify the IDE behavior
+2. **Use hot reload** to apply changes instantly
+3. **Build custom tools** and development utilities
+4. **Extend the editor** with your own features
+
+### 💡 Getting Started
+
+1. Create a new JavaScript file using the + button
+2. Write some code that uses the \`global.openIDE\` API
+3. Execute it with ▶️ to see it work
+4. Modify the code and use ⟲ to hot reload changes
+5. Explore the codebase to discover hidden features...
+
+### 🔍 Discovery Mode
+
+Open-IDE contains hidden advanced features throughout the codebase. Look for:
+- Commented out code sections
+- Hidden imports and modules  
+- Advanced API methods
+- Additional UI components
+
+**Start exploring and building your perfect mobile IDE!** 🚀
 
 ---
 
-*Tip: Look through the codebase for commented features you can discover and enable...*
+*Everything in Open-IDE is hot-reloadable JavaScript - modify the IDE while using it!*
 `;
 
     await this.createFile('tutorial.md', tutorialContent);
@@ -122,6 +139,7 @@ Start exploring and building! 🚀
   async loadFileTree() {
     this._fileTree = await this.buildFileTree(this._rootPath);
     this.set('fileTree', this._fileTree);
+    this.notifyPropertyChange('fileTree', this._fileTree);
   }
 
   async buildFileTree(folderPath) {
