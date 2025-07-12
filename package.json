@@ -1,11 +1,18 @@
 {
   "name": "open-ide",
   "displayName": "Open-IDE",
+  "displayName": "Open-IDE",
   "description": "An open, extensible mobile IDE with runtime customization",
   "main": "app/app.ts",
   "version": "1.0.0",
   "private": true,
   "repository": {
+  "nativescript": {
+    "id": "com.openide.app",
+    "tns-android": {
+      "version": "8.7.0"
+    }
+  },
     "type": "git",
     "url": "https://github.com/your-username/mobile-theia-ide.git"
   },
